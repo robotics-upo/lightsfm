@@ -58,7 +58,9 @@ public:
 	virtual const Obstacle& getNearestObstacle(const utils::Vector2d& x);
 	virtual bool isObstacle(const utils::Vector2d& x) const;
 	void computeDistances();
-	
+	void mapToPixel(const utils::Vector2d& x, Pixel& pixel) const;
+        void pixelToMap(const Pixel& pixel, utils::Vector2d& x) const;
+
 private:
 	struct Pixel
 	{
@@ -83,10 +85,6 @@ private:
 	};	
 
 	RosMap();
-	void mapToPixel(const utils::Vector2d& x, Pixel& pixel) const;
-	void pixelToMap(const Pixel& pixel, utils::Vector2d& x) const;
-		
-	
 	static RosMap::KdTreeNode* generateKdTree(std::vector<Pixel>& pixels, int begin, int end, bool split_x=true);
 	static bool comparePixelsByX(const Pixel& pixel0, const Pixel& pixel1) {return pixel0.x < pixel1.x;}
 	static bool comparePixelsByY(const Pixel& pixel0, const Pixel& pixel1) {return pixel0.y < pixel1.y;}

@@ -45,6 +45,20 @@ class RosMap : public Map
 {
 
 public:
+
+	struct Pixel
+	{
+		Pixel() : x(0), y(0) {}
+		Pixel(unsigned index, unsigned width)
+		: x(index % width), y(index / width) {}
+		int x;
+		int y;
+		int distance(const Pixel& other) const
+		{
+			return (x-other.x)*(x-other.x) + (y-other.y)*(y-other.y);	
+		}
+	};
+
 	RosMap(RosMap const&) = delete;
         void operator=(RosMap const&)  = delete;
 	virtual ~RosMap() {delete kdtree;}
@@ -62,19 +76,7 @@ public:
         void pixelToMap(const Pixel& pixel, utils::Vector2d& x) const;
 
 private:
-	struct Pixel
-	{
-		Pixel() : x(0), y(0) {}
-		Pixel(unsigned index, unsigned width)
-		: x(index % width), y(index / width) {}
-		int x;
-		int y;
-		int distance(const Pixel& other) const
-		{
-			return (x-other.x)*(x-other.x) + (y-other.y)*(y-other.y);	
-		}
-	};
-
+	
 	struct KdTreeNode
 	{
 		KdTreeNode(const Pixel& pixel) : pixel(pixel), left(NULL), right(NULL) {}

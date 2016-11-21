@@ -42,6 +42,7 @@ struct Forces
 	utils::Vector2d groupCoherenceForce;
 	utils::Vector2d groupRepulsionForce;
 	utils::Vector2d groupForce;
+	utils::Vector2d globalForce;
 };
 
 struct Parameters
@@ -298,7 +299,8 @@ std::vector<Agent>& SocialForceModel::computeForces(std::vector<Agent>& agents, 
 		utils::Vector2d desiredDirection = computeDesiredForce(agents[i]);
 		computeObstacleForce(agents[i],map);
 		computeSocialForce(i,agents);
-		computeGroupForce(i,desiredDirection,agents,groups);		
+		computeGroupForce(i,desiredDirection,agents,groups);
+		agents[i].forces.globalForce = agents[i].forces.desiredForce + agents[i].forces.socialForce + agents[i].forces.obstacleForce + agents[i].forces.groupForce;		
 	}
 	return agents;
 }

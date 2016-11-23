@@ -26,6 +26,7 @@
 #include <iostream>
 #include <cmath>
 #include <geometry_msgs/Point.h>
+#include <boost/functional/hash.hpp>
 
 #include "angle.hpp"
 
@@ -220,6 +221,22 @@ ostream& operator<<(ostream& stream, const utils::Vector2d& v)
 	stream<<"("<<v.getX()<<","<<v.getY()<<")"; 
 	return stream;
 }
+
+template<>
+struct hash<utils::Vector2d>
+{
+	size_t operator()(const utils::Vector2d& v) const
+	{
+		using boost::hash_value;
+      		using boost::hash_combine;
+		std::size_t seed = 0;		
+		hash_combine(seed,hash_value(v[0]));
+		hash_combine(seed,hash_value(v[1]));
+		return seed;
+	}
+
+};
+
 
 }
 

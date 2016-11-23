@@ -85,7 +85,7 @@ struct Goal
 struct Agent
 {
 	Agent()
-	: desiredVelocity(0.6),
+	: desiredVelocity(0.3),
 	  radius(0.35),
 	  cyclicGoals(false),
 	  teleoperated(false),
@@ -317,8 +317,11 @@ std::vector<Agent>& SocialForceModel::updatePosition(std::vector<Agent>& agents,
 			agents[i].position += inc;
 			agents[i].velocity.set(agents[i].linearVelocity * agents[i].yaw.cos(), agents[i].linearVelocity * agents[i].yaw.sin());
 		} else {
-			utils::Vector2d force = agents[i].forces.desiredForce + agents[i].forces.obstacleForce + agents[i].forces.socialForce + agents[i].forces.groupForce;
-			agents[i].velocity += force * dt;
+			agents[i].velocity += agents[i].forces.globalForce * dt;
+			if (agents[i].velocity.norm() > agents[i].desiredVelocity) {
+				agents[i].velocity.normalize();
+				agents[i].velocity *= agents[i].desiredVelocity;
+			}
 			agents[i].yaw = agents[i].velocity.angle();
 			agents[i].position += agents[i].velocity * dt;
 		}

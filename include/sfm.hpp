@@ -48,8 +48,8 @@ struct Forces
 struct Parameters
 {
 	Parameters()
-	: forceFactorDesired(2.0), // 1.0
-	  forceFactorObstacle(10),
+	: forceFactorDesired(2.0), 
+	  forceFactorObstacle(40), // 10
 	  forceSigmaObstacle(0.2),
 	  forceFactorSocial(2.1),  
 	  forceFactorGroupGaze(3.0),

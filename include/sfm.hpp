@@ -85,7 +85,7 @@ struct Goal
 struct Agent
 {
 	Agent()
-	: desiredVelocity(0.3),
+	: desiredVelocity(0.6),
 	  radius(0.35),
 	  cyclicGoals(false),
 	  teleoperated(false),

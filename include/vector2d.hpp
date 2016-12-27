@@ -41,7 +41,7 @@ public:
 	double operator()(int index) const {return index==0?x:y;}
 	double operator[](int index) const {return index==0?x:y;}
 	bool operator==(const Vector2d& other) const {return x==other.x && y==other.y;}
-	bool operator<(const Vector2d& other) const {return y<other.y || (y==other.y && x < other.x);} 
+	bool operator<(const Vector2d& other) const {return x<other.x || (x==other.x && y<other.y);}
 	double getX() const {return x;}
 	double getY() const {return y;}
 

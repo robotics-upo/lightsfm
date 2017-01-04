@@ -1,5 +1,5 @@
 CFlags=-c -Wall -O3  -std=gnu++11 -Iinclude 
-LDFlags= 
+LDFlags=  -ltinyxml
 CC=g++
 RM=rm
 

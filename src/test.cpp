@@ -22,10 +22,12 @@
 
 #include <iostream>
 #include <sfm.hpp>
+#include <astar.hpp>
 
 int main()
 {
 	sfm::SFM;
+	utils::AStar astar("prueba");
 	std::cout<<"test"<<std::endl;
 	return 0;
 }

@@ -93,6 +93,29 @@ struct Agent
 	  angularVelocity(0),
 	  groupId(-1) {}
 
+	Agent(double linearVelocity, double angularVelocity)
+	: desiredVelocity(0.6),
+	  radius(0.35),
+	  cyclicGoals(false),
+	  teleoperated(true),
+	  linearVelocity(linearVelocity),
+	  angularVelocity(angularVelocity),
+	  groupId(-1) {}
+
+	Agent(const utils::Vector2d& position, const utils::Angle& yaw, double linearVelocity, double angularVelocity)
+	: position(position),
+	  yaw(yaw),
+          desiredVelocity(0.6),
+	  radius(0.35),
+	  cyclicGoals(false),
+	  teleoperated(true),
+	  linearVelocity(linearVelocity),
+	  angularVelocity(angularVelocity),
+	  groupId(-1) {}
+
+
+	void move(double dt); // only if teleoperated
+
 	utils::Vector2d position; 
 	utils::Vector2d velocity; 
 	utils::Angle yaw; 
@@ -111,7 +134,8 @@ struct Agent
 
 	Forces forces;
 	Parameters params;
-	std::vector<utils::Vector2d> obstacles;
+	std::vector<utils::Vector2d> obstacles1;
+	std::vector<utils::Vector2d> obstacles2;
 };
 
 struct Group
@@ -136,9 +160,10 @@ public:
 
 	#define SFM SocialForceModel::getInstance()
 
-	
-	std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;
+	std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map=NULL) const;
 	std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;
+	
+
 
 private:
 	#define PW(x) ((x)*(x))
@@ -146,10 +171,10 @@ private:
 	utils::Vector2d computeDesiredForce(Agent& agent) const;
 	void computeObstacleForce(Agent& agent, Map* map) const;
 	void computeSocialForce(unsigned index, std::vector<Agent>& agents) const;
-	void computeGroupForce(unsigned index,  const utils::Vector2d& desiredDirection, std::vector<Agent>& agents, const std::unordered_map<int,Group>& groups) const;
+	void computeGroupForce(unsigned index, const utils::Vector2d& desiredDirection, std::vector<Agent>& agents, const std::unordered_map<int,Group>& groups) const;
+	
+
 };
-
-
 
 inline
 utils::Vector2d SocialForceModel::computeDesiredForce(Agent& agent) const
@@ -169,13 +194,17 @@ utils::Vector2d SocialForceModel::computeDesiredForce(Agent& agent) const
 inline
 void SocialForceModel::computeObstacleForce(Agent& agent, Map* map) const
 {
-	if (agent.obstacles.size()>0) {
+	if (agent.obstacles1.size()>0 || agent.obstacles2.size()>0) {
 		agent.forces.obstacleForce.set(0,0);
-		for (unsigned i = 0; i< agent.obstacles.size(); i++) {
-			double distance = agent.obstacles[i].norm() - agent.radius;
-			agent.forces.obstacleForce += agent.params.forceFactorObstacle * std::exp(-distance/agent.params.forceSigmaObstacle) * (-agent.obstacles[i]).normalized();		
+		for (unsigned i = 0; i< agent.obstacles1.size(); i++) {
+			double distance = agent.obstacles1[i].norm() - agent.radius;
+			agent.forces.obstacleForce += agent.params.forceFactorObstacle * std::exp(-distance/agent.params.forceSigmaObstacle) * (-agent.obstacles1[i]).normalized();		
 		}
-		agent.forces.obstacleForce /= (double)agent.obstacles.size();
+		for (unsigned i = 0; i< agent.obstacles2.size(); i++) {
+			double distance = agent.obstacles2[i].norm() - agent.radius;
+			agent.forces.obstacleForce += agent.params.forceFactorObstacle * std::exp(-distance/agent.params.forceSigmaObstacle) * (-agent.obstacles2[i]).normalized();		
+		}
+		agent.forces.obstacleForce /= (double)(agent.obstacles1.size()+agent.obstacles2.size());
 	} else if (map != NULL) {
 		const Map::Obstacle& obs = map->getNearestObstacle(agent.position);	
 		utils::Vector2d minDiff = agent.position - obs.position;
@@ -303,6 +332,17 @@ std::vector<Agent>& SocialForceModel::computeForces(std::vector<Agent>& agents, 
 		agents[i].forces.globalForce = agents[i].forces.desiredForce + agents[i].forces.socialForce + agents[i].forces.obstacleForce + agents[i].forces.groupForce;		
 	}
 	return agents;
+}
+
+
+inline
+void Agent::move(double dt)
+{
+	double imd = linearVelocity * dt;
+	utils::Vector2d inc(imd * std::cos(yaw.toRadian() + angularVelocity*dt*0.5), imd * std::sin(yaw.toRadian() + angularVelocity*dt*0.5));
+	yaw += utils::Angle::fromRadian(angularVelocity * dt);	
+	position += inc;
+	velocity.set(linearVelocity * yaw.cos(), linearVelocity * yaw.sin());
 }
 
 

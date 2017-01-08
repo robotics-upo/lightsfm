@@ -30,6 +30,9 @@
 #include <unordered_map>
 #include <limits>
 #include <tinyxml.h>
+#include <boost/uuid/uuid.hpp>            
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>         
 
 namespace utils
 {
@@ -38,8 +41,8 @@ class AStar
 {
 
 public:
-	AStar(const std::string& file);
-	AStar() {}
+	AStar(const std::string& file, double threshold=0.5);
+	AStar(double threshold=0.5) : threshold(threshold*threshold) {}
 	void addNode(const std::string& id, double x, double y, double r, bool goal=false);
 	void addEdge(const std::string& id0, const std::string& id1);
 	std::string& getClosestNode(double x, double y, std::string& id) const;
@@ -75,6 +78,7 @@ private:
 		return (n0->x - n1->x) * (n0->x - n1->x) + (n0->y - n1->y)* (n0->y - n1->y);
 	}
 	
+	double threshold;	
 	std::unordered_map<std::string, Node> nodes;
 	std::vector<std::string> goals;
 	
@@ -82,7 +86,8 @@ private:
 
 
 inline
-AStar::AStar(const std::string& file)
+AStar::AStar(const std::string& file, double threshold)
+: threshold(threshold*threshold)
 {
 	TiXmlDocument xml(file);
 	if (xml.LoadFile()) {
@@ -157,9 +162,18 @@ std::string& AStar::getClosestNode(double x, double y, std::string& id) const
 inline
 void AStar::addEdge(const std::string& id0, const std::string& id1)
 {
-	double cost = heuristic_cost_estimate(&nodes.at(id0), &nodes.at(id1));
-	addEdge(id0,id1,cost);
-	addEdge(id1,id0,cost);
+	Node& src = nodes.at(id0);
+	Node& dst = nodes.at(id1);	
+	double cost = heuristic_cost_estimate(&src, &dst);
+	if (cost>threshold) {
+		std::string mid_id = boost::uuids::to_string(boost::uuids::random_generator()());
+		addNode(mid_id,(src.x + dst.x)*0.5, (src.y + dst.y)*0.5, src.radius, false);
+		addEdge(id0,mid_id);
+		addEdge(mid_id,id1);
+	} else {
+		addEdge(id0,id1,cost);
+		addEdge(id1,id0,cost);
+	}
 
 }
 

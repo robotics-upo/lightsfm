@@ -41,8 +41,8 @@ class AStar
 {
 
 public:
-	AStar(const std::string& file, double threshold=0.5);
-	AStar(double threshold=0.5) : threshold(threshold*threshold) {}
+	AStar(const std::string& file, double threshold=10);
+	AStar(double threshold=10) : threshold(threshold*threshold) {}
 	void addNode(const std::string& id, double x, double y, double r, bool goal=false);
 	void addEdge(const std::string& id0, const std::string& id1);
 	std::string& getClosestNode(double x, double y, std::string& id) const;
@@ -58,6 +58,7 @@ public:
 private:
 	
 	void init(TiXmlNode *pParent);
+	void precompute();
 
 	struct Node
 	{
@@ -66,6 +67,7 @@ private:
 		double y;
 		double radius;
 		std::unordered_map<std::string,double> neighbors;
+		std::unordered_map<std::string,std::list<std::string> > paths;
 		double gScore;
 		double fScore;
 		Node *cameFrom;
@@ -93,8 +95,21 @@ AStar::AStar(const std::string& file, double threshold)
 	if (xml.LoadFile()) {
 		init(&xml);
 	} 
+	precompute();
 }
 
+
+inline
+void AStar::precompute()
+{
+	for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+		for (unsigned i = 0; i< goals.size(); i++) {
+			getPath(it->first,goals[i],it->second.paths[goals[i]]);
+		}
+	}
+
+
+}
 
 inline
 void AStar::init(TiXmlNode *pParent)
@@ -187,7 +202,13 @@ void AStar::addEdge(const std::string& id0, const std::string& id1, double cost)
 inline
 std::list<std::string>& AStar::getPath(const std::string& start_id, const std::string& goal_id, std::list<std::string>& path)
 {
+	Node* start_node = &nodes.at(start_id);
+	Node* goal_node = &nodes.at(goal_id);
 	path.clear();
+	if (start_node->paths.count(goal_id)>0 && start_node->paths.at(goal_id).size()>0) {
+		path = start_node->paths.at(goal_id);
+		return path;
+	}
 	std::unordered_set<std::string> closedSet;
 	std::unordered_map<std::string,Node*> openSet;
 	for (auto it = nodes.begin(); it != nodes.end(); ++it) {
@@ -195,8 +216,7 @@ std::list<std::string>& AStar::getPath(const std::string& start_id, const std::s
 		it->second.fScore = std::numeric_limits<double>::infinity();
 		it->second.cameFrom = NULL;
 	}
-	Node* start_node = &nodes.at(start_id);
-	Node* goal_node = &nodes.at(goal_id);
+	
 	start_node->gScore = 0;
 	start_node->fScore = heuristic_cost_estimate(start_node,goal_node);	
 	openSet[start_id] = start_node;	

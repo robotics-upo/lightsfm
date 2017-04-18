@@ -90,6 +90,7 @@ double CmdVelProvider::evaluate(double linVel, double angVel, double distance, d
 
 
 
+
 inline
 bool CmdVelProvider::checkCollision(const Agent& robot, double linearVelocity, double angularVelocity, double& distance, double& time) const
 {
@@ -102,6 +103,9 @@ bool CmdVelProvider::checkCollision(const Agent& robot, double linearVelocity, d
 	
 	// No angular velocity, special case
 	if (fabs(angularVelocity) < 1e-7) {
+		time = 999999;
+		distance = 999999;
+		bool coll=false;
 		for (unsigned k=0;k<2;k++) {
 			const std::vector<utils::Vector2d>& obstacles = k==0 ? robot.obstacles1 : robot.obstacles2; 
 			for (unsigned i = 0; i< obstacles.size(); i++) {
@@ -109,65 +113,98 @@ bool CmdVelProvider::checkCollision(const Agent& robot, double linearVelocity, d
 					continue;
 				}
 				if (fabs(obstacles[i].getY())<= robot.radius) {
-					distance = fabs(obstacles[i].getX());
+					double aux_distance = fabs(obstacles[i].getX());
 					double offset = std::sqrt(PW(robot.radius) - PW(obstacles[i].getY()));
-					distance -= offset;
-					if (distance <0 ) {
-						distance = 0;
+					aux_distance -= offset;
+					if (aux_distance <0 ) {
+						aux_distance = 0;
 					}
-					time = distance / fabs(linearVelocity);
-					return fabs(linearVelocity) > std::sqrt(2*distance * robot_max_lin_acc);
-				}		
+					double aux_time = aux_distance / fabs(linearVelocity);
+					coll = coll || ((aux_time >= 0.0) && fabs(linearVelocity) > std::sqrt(2*aux_distance * robot_max_lin_acc));
+					if((aux_time >= 0.0) && (aux_time < time)){
+						time=aux_time;
+						distance=fabs(aux_distance);	
+					}
+				}
 			}
 		}
-		time = 999999;
-		distance = 999999;
-		return false;
+		return coll;
 	} 
 
+	
 	// Angular and linear velocity, general case
-	utils::Vector2d icc(0,linearVelocity/angularVelocity);
+	time = 999999;
+	distance = 999999;
+
+	//double ang=999999;
+	bool coll=false;
+
+	//Alternative version:
+	utils::Vector2d icc(0,linearVelocity/angularVelocity); //Instantaneous Centre of Rotation. In the local frame (base_link), it is located in the Y axis
 	for (unsigned k = 0; k<2; k++) {
 		const std::vector<utils::Vector2d>& obstacles = k==0 ? robot.obstacles1 : robot.obstacles2; 
 		for (unsigned i = 0; i< obstacles.size(); i++) {
-			utils::Vector2d u = (obstacles[i] - icc).leftNormalVector();
-			if (linearVelocity >= 0 && angularVelocity < 0) {
-				u.set(-u.getX(),u.getY());
-			} else if (linearVelocity <0 && angularVelocity >= 0) {
-				u.set(-u.getX(),-u.getY());
-			} else if (linearVelocity<0 && angularVelocity<0) {
+
+			//Obstacle with respect to the instantaneous rotation center
+			utils::Vector2d u = (obstacles[i] - icc); 
+
+			//If the obstacle is outside the annular disc traversed by the robot (radii a and b, centered at icc), no collision
+			double a = icc.norm() - robot.radius;
+			double b = icc.norm() + robot.radius;
+		
+			//icc within robot radius
+			if (a < 0.0)
+				a = 0.0;
+
+			//No collission
+			if(u.norm() < a || u.norm() > b)
+				continue;
+
+			//Angle, along the circular path, where the collision occurs
+			double ctheta = (icc.squaredNorm()+u.squaredNorm()-PW(robot.radius))/(2.0*icc.norm()*u.norm());
+			double theta = std::acos(ctheta);
+
+			//Set the correct cuadrant according to the motion of the robot
+			if ((linearVelocity>0 && angularVelocity > 0)) {
 				u.set(u.getX(),-u.getY());
+			}else if ((linearVelocity<0 && angularVelocity < 0)){
+				u.set(-u.getX(),-u.getY());
+			}else if ((linearVelocity<0 && angularVelocity > 0)){
+				u.set(-u.getX(),u.getY());
 			}
-			utils::Angle alpha = u.angle();
-			double t = alpha.toRadian(utils::Angle::PositiveOnlyRange)/fabs(angularVelocity);
-			Agent dummy(linearVelocity, angularVelocity);
-			dummy.move(t);
-			if ((dummy.position - obstacles[i]).squaredNorm() <= PW(robot.radius)) {
-				while ((dummy.position - obstacles[i]).squaredNorm() <= PW(robot.radius)) {
-					t-=0.01;
-					dummy = Agent(linearVelocity, angularVelocity);
-					dummy.move(t);
-				}
-				t+=0.005; 
-				time = t;
-				if (time <0 ) {
-					time = 0;
-				}
-				distance = fabs(linearVelocity)*time;
-				return fabs(linearVelocity) > std::sqrt(2*distance * robot_max_lin_acc) || 
-					fabs(angularVelocity) > std::sqrt(2*distance * robot_max_ang_acc);
-			}
+
+			//Angular distance until the collision (the current angle of the obstacle minus the angle where the collision occurs)
+			//We convert it to have a positive value
+			double angleObs = std::atan2(u[0],u[1]);
+			if(angleObs <0.0)
+				angleObs+=2.0*M_PI;
+
+			double deltaTheta = angleObs - theta;
+
+
+			double aux_distance = deltaTheta * u.norm(); //Distance until collision. Angle (in radians) times radius. It has sign
+			double aux_time = aux_distance/fabs(linearVelocity); 
+		
+
+			//double aux_time = deltaTheta/fabs(angularVelocity);
+			//double aux_distance = fabs(linearVelocity)*aux_time;
+			//Check the condition on angular velocities. Can we avoid the obstacle by stopping the rotation?
+		
+
+			coll = coll || ((aux_time >= 0.0) && ((fabs(linearVelocity) > std::sqrt(2*fabs(aux_distance) * robot_max_lin_acc)) || 
+					(fabs(angularVelocity) > std::sqrt(2*fabs(deltaTheta) * robot_max_ang_acc))));
+
+			//coll = coll || ((aux_time >= 0.0) && (fabs(linearVelocity) > std::sqrt(2*fabs(aux_distance) * params.robotMaxLinearAcceleration)));	
+		
+		
+			if((aux_time >= 0.0) && (aux_time < time)){
+				time=aux_time;
+				distance=fabs(aux_distance);
+				//ang=deltaTheta;		
+			}	
 		}
 	}
-	time = 999999;
-	distance = 999999;
-	return false;
-
-
 }
-
-
-
 
 
 inline

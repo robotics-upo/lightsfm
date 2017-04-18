@@ -43,6 +43,7 @@ class AStar
 public:
 	AStar(const std::string& file, double threshold=10);
 	AStar(double threshold=10) : threshold(threshold*threshold) {}
+	void init(const std::string& file);
 	void addNode(const std::string& id, double x, double y, double r, bool goal=false);
 	void addEdge(const std::string& id0, const std::string& id1);
 	std::string& getClosestNode(double x, double y, std::string& id) const;
@@ -91,6 +92,12 @@ inline
 AStar::AStar(const std::string& file, double threshold)
 : threshold(threshold*threshold)
 {
+	init(file);
+}
+
+inline
+void AStar::init(const std::string& file)
+{
 	TiXmlDocument xml(file);
 	if (xml.LoadFile()) {
 		init(&xml);
@@ -107,8 +114,6 @@ void AStar::precompute()
 			getPath(it->first,goals[i],it->second.paths[goals[i]]);
 		}
 	}
-
-
 }
 
 inline

@@ -1,6 +1,9 @@
 #ifndef _CMD_VEL_HPP_
 #define _CMD_VEL_HPP_
 
+#include <geometry_msgs/Twist.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 #include <vector>
 #include "sfm.hpp"
 
@@ -13,8 +16,10 @@ class CmdVelProvider
 public:
 	CmdVelProvider(double obstacle_distance_threshold, double robot_max_lin_vel, double robot_max_lin_acc, double robot_max_ang_acc, double beta_v, double beta_y, double beta_d);
 	~CmdVelProvider() {}
-	void compute(const Agent& robot, double dt);
+	bool compute(const Agent& robot, const Agent& target, bool targetFound, bool validGoal, double dt);
 	const geometry_msgs::Twist& getCommand() const {return command;}
+	visualization_msgs::MarkerArray& getMarkers() {return markers;}
+
 
 private:
 	#define PW(x) ((x)*(x))
@@ -34,8 +39,8 @@ private:
 	double beta_d;
 	std::vector<geometry_msgs::Twist> velocities;
 	geometry_msgs::Twist command;
-
-
+	visualization_msgs::MarkerArray markers;
+	visualization_msgs::MarkerArray full_markers;
 };
 
 inline
@@ -56,6 +61,9 @@ CmdVelProvider::CmdVelProvider(double obstacle_distance_threshold, double robot_
 	static const std::vector<double> lin_vels = 
 		{ 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
 
+	full_markers.markers.resize(ang_vels.size() * lin_vels.size());
+	markers.markers.resize(ang_vels.size() * lin_vels.size());
+	unsigned counter = 0;
 	for (unsigned i = 0; i< lin_vels.size(); i++) {
 		for (unsigned j = 0; j<ang_vels.size(); j++) {
 			geometry_msgs::Twist twist;
@@ -66,8 +74,25 @@ CmdVelProvider::CmdVelProvider(double obstacle_distance_threshold, double robot_
 			twist.angular.y = 0;
 			twist.angular.z = ang_vels[j];
 			velocities.push_back(twist);
+			full_markers.markers[counter].points.resize(30);
+			Agent dummy(lin_vels[i],ang_vels[j]);
+			for (unsigned k = 0; k< 30; k++) {
+				full_markers.markers[counter].points[k].x = dummy.position.getX();
+				full_markers.markers[counter].points[k].y = dummy.position.getY();
+				full_markers.markers[counter].points[k].z = 0;
+				dummy.move(0.1);
+			}
+			markers.markers[counter].header.frame_id="base_link";
+			markers.markers[counter].ns = "trajectories";
+			markers.markers[counter].id = counter;
+			markers.markers[counter].type = 4;
+			markers.markers[counter].action = 0;
+			markers.markers[counter].scale.x = 0.01;
+			counter++;
 		}
 	}
+
+
 };
 
 inline
@@ -208,25 +233,48 @@ bool CmdVelProvider::checkCollision(const Agent& robot, double linearVelocity, d
 
 
 inline
-void CmdVelProvider::compute(const Agent& robot, double dt)
+bool CmdVelProvider::compute(const Agent& robot, const Agent& target, bool targetFound, bool validGoal, double dt)
 {
+	static bool finishing=false;
 	utils::Vector2d velocityRef = robot.velocity + robot.forces.globalForce * dt;
-	
 	utils::Vector2d positionRef;
-	utils::Angle yawRef;
-	
-	if (velocityRef.norm() > robot_max_lin_vel) {
-		velocityRef.normalize();
-		velocityRef *= robot_max_lin_vel;
-	}
-	positionRef = robot.position + velocityRef * dt;
-	yawRef = velocityRef.angle();
-		
+	static utils::Angle yawRef;
 	command.linear.x = 0;
 	command.angular.z = 0;
+	if (!targetFound && !validGoal) {
+		return false;
+	} else if (targetFound && target.velocity.norm()<0.2 &&
+		(robot.position - target.position).norm() <= 1.0) {
+		if (!finishing) {
+			yawRef = (target.position - robot.position).angle();
+		}
+		utils::Angle diff = robot.yaw - yawRef;
+		if (std::abs(diff.toDegree())<15) {
+			return true;
+		} else if (diff.sign()>0) {
+			command.linear.x = 0;
+			command.angular.z=-0.8;
+			return true;
+		} else {
+			command.linear.x = 0;
+			command.angular.z=0.8;
+			return true;
+		}
+	} else {
+		if (velocityRef.norm() > robot_max_lin_vel) {
+			velocityRef.normalize();
+			velocityRef *= robot_max_lin_vel;
+		}
+		positionRef = robot.position + velocityRef * dt;
+		yawRef = velocityRef.angle();
+		finishing = false;
+	}
+	
 	double min = 999999999;
 	double robot_lin_vel = robot.linearVelocity;
 	double robot_ang_vel = robot.angularVelocity;
+
+	int i_min=-1;
 
 	double distance=0;
 	double time = 0;
@@ -236,20 +284,55 @@ void CmdVelProvider::compute(const Agent& robot, double dt)
 		double angVel = velocities[i].angular.z;
 		double linAcc = (linVel - robot_lin_vel)/dt;
 		double angAcc = (angVel - robot_ang_vel)/dt;
+		markers.markers[i].header.stamp = current_time;
+		markers.markers[i].lifetime = ros::Duration(1.0);
+		bool collision = checkCollision(robot, linVel, angVel, distance, time);
+				
+		unsigned size = std::min(30u,(unsigned)std::round(time * 10.0));
+		markers.markers[i].points.assign(full_markers.markers[i].points.begin(),full_markers.markers[i].points.begin()+size); 
+		markers.markers[i].color.a = 1.0;
+		markers.markers[i].scale.x = 0.01;
+		
 		if (fabs(linAcc) > robot_max_lin_acc ||
 			fabs(angAcc) > robot_max_ang_acc) {
+			markers.markers[i].color.r = 0.5;
+			markers.markers[i].color.g = 0.5;
+			markers.markers[i].color.b = 0.5;
 			continue;
 		}
-		if (checkCollision(robot, linVel, angVel,distance,time)) {
+		if (collision) {
+			markers.markers[i].color.r = 1.0;
+			markers.markers[i].color.g = 0.0;
+			markers.markers[i].color.b = 0.0;
 			continue;
 		}		
-		double value = evaluate(linVel, angVel, distance, dt, robot, velocityRef, yawRef);
+		double value = evaluate(linVel, angVel, distance, dt, robot, velocityRef, yawRef);	
+		
+		markers.markers[i].color.r = 0.0;
+		markers.markers[i].color.g = value;
+		markers.markers[i].color.b = 0.0;
+	
+
 		if (value < min) {
 			min = value;
 			command.linear.x = linVel;
 			command.angular.z = angVel;
+			i_min = i;
 		}
 	}
+
+	if(i_min>=0)
+	{
+		markers.markers[i_min].color.r = 0.0;
+		markers.markers[i_min].color.g = 0.0;
+		markers.markers[i_min].color.b = 1.0;
+		markers.markers[i_min].scale.x = 0.1;
+	}
+
+	
+	return finishing;
+	
+
 }
 }
 #endif

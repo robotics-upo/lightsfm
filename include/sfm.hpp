@@ -43,6 +43,7 @@ struct Forces
 	utils::Vector2d groupRepulsionForce;
 	utils::Vector2d groupForce;
 	utils::Vector2d globalForce;
+	utils::Vector2d robotSocialForce;
 };
 
 struct Parameters
@@ -89,6 +90,7 @@ struct Agent
 	  radius(0.35),
 	  cyclicGoals(false),
 	  teleoperated(false),
+	  antimove(false),
 	  linearVelocity(0),
 	  angularVelocity(0),
 	  groupId(-1) {}
@@ -98,6 +100,7 @@ struct Agent
 	  radius(0.35),
 	  cyclicGoals(false),
 	  teleoperated(true),
+          antimove(false),
 	  linearVelocity(linearVelocity),
 	  angularVelocity(angularVelocity),
 	  groupId(-1) {}
@@ -109,6 +112,7 @@ struct Agent
 	  radius(0.35),
 	  cyclicGoals(false),
 	  teleoperated(true),
+          antimove(false),
 	  linearVelocity(linearVelocity),
 	  angularVelocity(angularVelocity),
 	  groupId(-1) {}
@@ -120,6 +124,8 @@ struct Agent
 	utils::Vector2d velocity; 
 	utils::Angle yaw; 
 	
+	utils::Vector2d movement;	
+
 	double desiredVelocity;
 	double radius; 
 
@@ -127,6 +133,7 @@ struct Agent
 	bool cyclicGoals; 	
 
 	bool teleoperated; 
+	bool antimove;
 	double linearVelocity; 
 	double angularVelocity;	
 
@@ -184,8 +191,10 @@ utils::Vector2d SocialForceModel::computeDesiredForce(Agent& agent) const
 		utils::Vector2d diff = agent.goals.front().center - agent.position;
 		desiredDirection = diff.normalized();
 		agent.forces.desiredForce = agent.params.forceFactorDesired * (desiredDirection * agent.desiredVelocity  - agent.velocity)/agent.params.relaxationTime;
+		agent.antimove=false;
 	} else {
 		agent.forces.desiredForce = -agent.velocity / agent.params.relaxationTime;
+		agent.antimove=true;
 	}
 	return desiredDirection;
 }
@@ -238,6 +247,9 @@ void SocialForceModel::computeSocialForce(unsigned index, std::vector<Agent>& ag
 		utils::Vector2d forceVelocity = forceVelocityAmount * interactionDirection;
 		utils::Vector2d forceAngle = forceAngleAmount * interactionDirection.leftNormalVector();
 		agent.forces.socialForce += agent.params.forceFactorSocial * (forceVelocity + forceAngle);
+		if (i==0) {
+			agent.forces.robotSocialForce = agent.params.forceFactorSocial * (forceVelocity + forceAngle);
+		}
 	}
 }
 
@@ -350,6 +362,7 @@ inline
 std::vector<Agent>& SocialForceModel::updatePosition(std::vector<Agent>& agents, double dt) const
 {
 	for (unsigned i=0; i< agents.size(); i++) {
+		utils::Vector2d initPos = agents[i].position;
 		if (agents[i].teleoperated) {
 			double imd = agents[i].linearVelocity * dt;
 			utils::Vector2d inc(imd * std::cos(agents[i].yaw.toRadian() + agents[i].angularVelocity*dt*0.5), imd * std::sin(agents[i].yaw.toRadian() + agents[i].angularVelocity*dt*0.5));
@@ -365,6 +378,7 @@ std::vector<Agent>& SocialForceModel::updatePosition(std::vector<Agent>& agents,
 			agents[i].yaw = agents[i].velocity.angle();
 			agents[i].position += agents[i].velocity * dt;
 		}
+		agents[i].movement = agents[i].position - initPos;
 		if (!agents[i].goals.empty() && (agents[i].goals.front().center - agents[i].position).norm()<=agents[i].goals.front().radius) {
 			Goal g = agents[i].goals.front();
 			agents[i].goals.pop_front();

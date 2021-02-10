@@ -21,8 +21,8 @@
 /***********************************************************************/
 
 #include <iostream>
-#include <sfm.hpp>
-#include <astar.hpp>
+#include <lightsfm/sfm.hpp>
+#include <lightsfm/astar.hpp>
 
 int main()
 {

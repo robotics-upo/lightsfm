@@ -8,16 +8,16 @@ It is based on the model proposed by Helbing and Molnar [1] and extended for soc
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians. 
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{total} = f_{goal} + f_{obs} + f_{ped} + f_{group}">
+<img src="https://render.githubusercontent.com/render/math?math=F_{total} = f_{goal} %2B f_{obs} %2B f_{ped} %2B f_{group}">
 
 ## Social Forces
 ### 1. Attractive force to reach the goal (f<sub>goal</sub>)
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha">
+<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{g} 1/\gamma (V_{desired} - V_{actual})">
 
 Parameters:
 
-- **whatever**:
+- whatever
 
 ### 2. Repulsive force of obstacles (f<sub>obs</sub>)
 

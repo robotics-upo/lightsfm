@@ -13,7 +13,7 @@ The model consists on the definition of different attractive and repulsive force
 ## Social Forces
 ### 1. Attractive force to reach the goal (f<sub>goal</sub>)
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{g} 1/\gamma (V_{desired} - V_{actual})">
+<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{g} \frac{1}{\gamma} (V_{desired} - V_{actual})">
 
 Parameters:
 

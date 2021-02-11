@@ -11,21 +11,21 @@ The model consists on the definition of different attractive and repulsive force
 <img src="https://render.githubusercontent.com/render/math?math=F_{total} = f_{goal} %2B f_{obs} %2B f_{ped} %2B f_{group}">
 
 ## Social Forces
-### 1. Attractive force to reach the goal (f<sub>goal</sub>)
+### 1. Attractive force to reach the goal (DesiredForce f<sub>goal</sub>)
 
 <img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{g} \frac{1}{\gamma} (V_{desired} - V_{actual})">
 
 Parameters:
 
-- whatever
+- <img src="https://render.githubusercontent.com/render/math?math=\alpha_{g}"> Strength Factor of the desire to reach the goal.
 
-### 2. Repulsive force of obstacles (f<sub>obs</sub>)
-
-
-### 3. Respulsive force of other pedestrians (f<sub>ped</sub>)
+### 2. Repulsive force of obstacles (ObstacleForce f<sub>obs</sub>)
 
 
-### 4. Force of interaction groups (f<sub>group</sub>)
+### 3. Respulsive force of other pedestrians (SocialForce f<sub>ped</sub>)
+
+
+### 4. Force of interaction groups (GroupForce f<sub>group</sub>)
 
 This force is a combination of another subforces that keeps the formation of the social group.
 

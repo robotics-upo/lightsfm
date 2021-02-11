@@ -10,11 +10,11 @@ The model consists on the definition of different attractive and repulsive force
 
 *F<sub>total</sub> = f<sub>goal</sub> + f<sub>obs</sub> + f<sub>ped</sub> + f<sub>group</sub>*
 
-## FORCES
+## Social Forces
 ### 1. Attractive force to reach the goal (f<sub>goal</sub>)
 
 
-### 2. Repulsive force of obstacle (f<sub>obs</sub>)
+### 2. Repulsive force of obstacles (f<sub>obs</sub>)
 
 
 ### 3. Respulsive force of other pedestrians (f<sub>ped</sub>)

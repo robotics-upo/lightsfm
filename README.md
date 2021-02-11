@@ -17,7 +17,8 @@ The model consists on the definition of different attractive and repulsive force
 
 Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\alpha_{g}"> Strength Factor of the desire to reach the goal.
+- <img src="https://render.githubusercontent.com/render/math?math=\alpha_{g}+"> Strength Factor of the desire to reach the goal.
+- <img src="https://render.githubusercontent.com/render/math?math=\gamma+"> 
 
 ### 2. Repulsive force of obstacles (ObstacleForce f<sub>obs</sub>)
 
@@ -30,4 +31,19 @@ Parameters:
 This force is a combination of another subforces that keeps the formation of the social group.
 
 *f<sub>group</sub> = f<sub>ggaze</sub> + f<sub>gcoh</sub> + f<sub>grep</sub>*
+
+
+...
+
+
+## Code indications
+
+- *sfm.hpp* contains the computation of all the forces.
+- *cmd_vel.hpp* make use of the forces in order to compute a velocity command to be sent to the robot. 
+- *angle.hpp and vector2d.hpp* contain different structures and methods that are employed in the forces computation.
+- *map.hpp* contains a structure for representing the obstacles of the static map, and some virtual methods to check obstacles.
+- *rosmap.hpp* is a class that implements the virtual methods of map.hpp and uses ROS to obtain the static navigation map. It also implement a kd-tree to perform a nearest-neighbor search on the map obstacles.
+- *astar.hpp* is an auxiliary class that contains the implementation of a Astar path planning algorithm.
+
+ 
 

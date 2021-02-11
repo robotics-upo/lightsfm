@@ -13,6 +13,11 @@ The model consists on the definition of different attractive and repulsive force
 ## Social Forces
 ### 1. Attractive force to reach the goal (f<sub>goal</sub>)
 
+<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
+
+Parameters:
+
+- **whatever**:
 
 ### 2. Repulsive force of obstacles (f<sub>obs</sub>)
 
@@ -21,4 +26,8 @@ The model consists on the definition of different attractive and repulsive force
 
 
 ### 4. Force of interaction groups (f<sub>group</sub>)
+
+This force is a combination of another subforces that keeps the formation of the social group.
+
+*f<sub>group</sub> = f<sub>ggaze</sub> + f<sub>gcoh</sub> + f<sub>grep</sub>*
 

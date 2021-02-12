@@ -57,11 +57,11 @@ This force is a combination of another subforces that keeps the formation of the
 <img src="https://render.githubusercontent.com/render/math?math=f_{group} = f_{ggaze} %2B f_{gcoh} %2B f_{grep}">
 
 
-	#### 4.1. Force of vision field of the group (GroupGazeForce f<sub>ggaze</sub>)
+#### 4.1. Force of vision field of the group (GroupGazeForce f<sub>ggaze</sub>)
 
-	#### 4.2. Attraction force to the group's center of mass (GroupCoherenceForce f<sub>gcoh</sub>)
+#### 4.2. Attraction force to the group's center of mass (GroupCoherenceForce f<sub>gcoh</sub>)
 
-	#### 4.3. Respulsion force of overlaping group members (GroupRespulsionForce f<sub>grep</sub>)
+#### 4.3. Respulsion force of overlaping group members (GroupRespulsionForce f<sub>grep</sub>)
 
 
 ## Code indications

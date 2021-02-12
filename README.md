@@ -87,7 +87,7 @@ Parameters:
 - <img src="https://render.githubusercontent.com/render/math?math=\omega_{gc}+"> Strength Factor of the desire to walk with the group (*default: 2.0*).
 - <img src="https://render.githubusercontent.com/render/math?math=\R_{pg}+"> is the position of the group's mass center *g* relative to the pedestrian *p*.
 - <img src="https://render.githubusercontent.com/render/math?math=q_{a}+"> is a saturation factor in the range [-1,1]  based on the distance to the group's center and a distance threshold.
-	<img src="https://render.githubusercontent.com/render/math?math=q_{a} = tanh(d_{pg}-((n-1)/2)+"> width <img src="https://render.githubusercontent.com/render/math?math=d_{pg}+"> the Euclidean distance between the agent *p* and the group's center *g*; and *n* the number of agents in the group.
+	<img src="https://render.githubusercontent.com/render/math?math=q_{a} = tanh(d_{pg}-((n-1)/2))+"> with <img src="https://render.githubusercontent.com/render/math?math=d_{pg}+"> the Euclidean distance between the agent *p* and the group's center *g*; and *n* the number of agents in the group.
 
 #### 4.3. Respulsion force of overlaping group members (GroupRespulsionForce F<sub>grep</sub>)
 Repulsion effect so that the group members do not overlap each other.

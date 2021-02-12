@@ -22,7 +22,7 @@ find_package(TinyXML REQUIRED)
 ## The catkin_package macro generates cmake config files for your package
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES ${PROJECT_NAME}
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS geometry_msgs nav_msgs roscpp
   DEPENDS TinyXML
 )
@@ -35,12 +35,18 @@ include_directories(include)
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS} ${TinyXML_INCLUDE_DIRS})
 
 
-## Declare a C++ executable
- add_executable(test_node
-     src/test.cpp
- )
+# Generate a only-header library
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include/${PROJECT_NAME}/>)
+target_link_libraries(${PROJECT_NAME} INTERFACE ${catkin_LIBRARIES} ${TinyXML_LIBRARIES})
+#add_dependencies(test_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(test_node ${catkin_LIBRARIES} ${TinyXML_LIBRARIES})
+
+## Declare a C++ executable
+add_executable(test_node
+   src/test.cpp
+)
+target_link_libraries(test_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${TinyXML_LIBRARIES})
 #add_dependencies(test_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 

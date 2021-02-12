@@ -26,22 +26,28 @@ Parameters:
 
 We use a monotonic decreasing potential of the force (an exponential in our case) based on the distance between the agent and the obstacles.
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{o} e^{\frac{-d_{po}}{\sigma_{o}}}  \left \| d_{po} \right \|">
+<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{o} e^{(-d_{po} / \sigma_{o})}  \left \| d_{po} \right \|">
 
 Parameters:
 
 - <img src="https://render.githubusercontent.com/render/math?math=\alpha_{o}+"> Strength Factor of the desire to walk away the obstacles (*default: 10.0*).
 - <img src="https://render.githubusercontent.com/render/math?math=\sigma_{o}+"> Exponential parameter (*default: 0.2*).
-- <img src="https://render.githubusercontent.com/render/math?math=\d_{po}+"> Distance between the pedestrian p and the obstacle o.
+- <img src="https://render.githubusercontent.com/render/math?math=\d_{po}+"> Distance between the pedestrian *p* and the obstacle *o*.
 
 
 ### 3. Respulsive force of other pedestrians (SocialForce f<sub>ped</sub>)
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{goal} = \alpha_{o} e^{\frac{-d_{po}}{\sigma_{o}}}  \left \| d_{po} \right \|">
+Other pedestrian will prokove a repulsive effect on the agent based on the distance, velocity and direction of their movements. Again we use exponential potentials
+
+TODO
 
 Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\alpha_{s}+"> Strength Factor of the desire to keep a social distance from other pedestrians (*default: 2.1*).
+- <img src="https://render.githubusercontent.com/render/math?math=\alpha_{s}+"> Strength Factor of ... (*default: 2.1*).
+- <img src="https://render.githubusercontent.com/render/math?math=\gamma_{s}+"> (*default: 0.35*).
+- <img src="https://render.githubusercontent.com/render/math?math=\lamdda_{s}+"> (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=\n_{s}+"> (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=\n'_{s}+"> (*default: 3.0*).
 
 
 ### 4. Force of interaction groups (GroupForce f<sub>group</sub>)
@@ -51,7 +57,11 @@ This force is a combination of another subforces that keeps the formation of the
 <img src="https://render.githubusercontent.com/render/math?math=f_{group} = f_{ggaze} %2B f_{gcoh} %2B f_{grep}">
 
 
-...
+	#### 4.1. Force of vision field of the group (GroupGazeForce f<sub>ggaze</sub>)
+
+	#### 4.2. Attraction force to the group's center of mass (GroupCoherenceForce f<sub>gcoh</sub>)
+
+	#### 4.3. Respulsion force of overlaping group members (GroupRespulsionForce f<sub>grep</sub>)
 
 
 ## Code indications

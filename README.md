@@ -45,9 +45,9 @@ Parameters:
 
 - <img src="https://render.githubusercontent.com/render/math?math=\alpha_{s}+"> Strength Factor of ... (*default: 2.1*).
 - <img src="https://render.githubusercontent.com/render/math?math=\gamma_{s}+"> (*default: 0.35*).
-- <img src="https://render.githubusercontent.com/render/math?math=\lamdda_{s}+"> (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math=\n_{s}+"> (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math=\n'_{s}+"> (*default: 3.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=\lambda_{s}+"> (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=n_{s}+"> (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math={n'}_{s}+"> (*default: 3.0*).
 
 
 ### 4. Force of interaction groups (GroupForce f<sub>group</sub>)

@@ -21,6 +21,7 @@ With:
 
 - <img src="https://render.githubusercontent.com/render/math?math=v_{desired}+"> Desired velocity value.
 - <img src="https://render.githubusercontent.com/render/math?math=E_{desired}+"> Desired direction vector with:
+
 	<img src="https://render.githubusercontent.com/render/math?math=E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}+">
 	- <img src="https://render.githubusercontent.com/render/math?math=R_{goal}+"> the desired goal position.
 	- <img src="https://render.githubusercontent.com/render/math?math=R_{current}+"> the current agent position.
@@ -65,16 +66,19 @@ However, in this implementation we compute two forces that are based on the inte
 <img src="https://render.githubusercontent.com/render/math?math=F_{soc} = \omega_{s} (F_{Ivel} %2B F_{Iangle})  +">
 
 <img src="https://render.githubusercontent.com/render/math?math=F_{Ivel} = w_{vel} * I_{dpi}+">
-<img src="https://render.githubusercontent.com/render/math?math=F_{angle} = w_{ang} * I_{dpi}+">    (¿¿¿normal vector to Idpi instead of ldpi vector???)
+<img src="https://render.githubusercontent.com/render/math?math=F_{angle} = w_{ang} * I_{dpi}+">(¿¿¿normal vector to Idpi instead of ldpi vector???)
 
 in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector <img src="https://render.githubusercontent.com/render/math?math=I_{dpi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}+"> 
 
 With the interaction vector computed as:
+
 <img src="https://render.githubusercontent.com/render/math?math=I_{vpi} = \lambda_{s}(V_{p} - V_{i}) %2B \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}   +">
 
 And the monotonic descreasing functions in the form of exponentials:
+
 <img src="https://render.githubusercontent.com/render/math?math=w_{vel}  = - e^{-\left \| R_{i}-R_{p} \right \| / ((\gamma_{s} \left \| I_{vpi} \right \| ) - n\' \gamma_{s} \left \| I_{vpi} \right \| \theta)^2}+">
 <img src="https://render.githubusercontent.com/render/math?math=w_{ang}  = - e^{-\left \| R_{i}-R_{p} \right \| / ((\gamma_{s} \left \| I_{vpi} \right \| ) - n \gamma_{s} \left \| I_{vpi} \right \| \theta)^2}+">
+
 Note: the only differences are the parameteres *n'* and *n*
 
 Parameters:
@@ -104,7 +108,9 @@ In our implementation we can not detect the gaze direction, so we check if the g
 With:
 
 - <img src="https://render.githubusercontent.com/render/math?math=\alpha+"> Value based on the desired direction and the distante to the mass center.
+
 	<img src="https://render.githubusercontent.com/render/math?math=\alpha = V_{desired}\cdot R_{pg} / (\left \| V_{desired} \right \|)^2+">
+
 Where <img src="https://render.githubusercontent.com/render/math?math=R_{pg} +"> is the position of the group's mass center *g* relative to the pedestrian *p*.
 
 - <img src="https://render.githubusercontent.com/render/math?math=\V_{desired}+"> Desired direction vector.

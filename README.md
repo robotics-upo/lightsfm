@@ -103,7 +103,7 @@ It is based on the rotation angle of the pedestrian's head (gazing direction) so
 The greater the head rotation the less comfortable is the turning for walking, and therefore the pedestrian adjusts its position to reduce the head rotation.
 In our implementation we can not detect the gaze direction, so we check if the group's mass center is beyond the vision field of the pedestrian according to his/her movement direction. Therefore, if the angle to communicate with the group (look to the mass center) is greater than the vision field we apply the following force:
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{ggaze} = \omega_{gz}+\alpha+V_{desired}">
+<img src="https://render.githubusercontent.com/render/math?math=F_{ggaze} = \omega_{gz}+\alpha+V_{desired}">
 
 With:
 

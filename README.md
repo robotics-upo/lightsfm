@@ -1,10 +1,11 @@
 # lightsfm
 
 A lightweight implementation of the Social Force Model for Social Local Navigation. 
-It is based on the model proposed by Helbing and Molnar [1] and extended for social groups by Moussaid et Al. [2]:
+It is based on the initial model proposed by Helbing and Molnar [1] and extended for social groups by Moussaid et Al. [2][3]:
 
 - **[1]** Helbing, Dirk & Molnar, Peter. (1998). *Social Force Model for Pedestrian Dynamics*. Physical Review E. 51. 10.1103/PhysRevE.51.4282. 
-- **[2]** Moussaïd, Mehdi & Perozo, Niriaska & Garnier, Simon & Helbing, Dirk & Theraulaz, Guy. (2010). *The Walking Behaviour of Pedestrian Social Groups and Its Impact on Crowd Dynamics*. PloS one. 5. e10047. 10.1371/journal.pone.0010047. 
+- **[2]** Moussaid M, Helbing D, Garnier S, Johansson A, Combe M, et al. (2009) Experimental study of the behavioural mechanisms underlying self-organization in human crowds. Proceedings of the Royal Society B: Biological Sciences 276: 2755–2762.
+- **[3]** Moussaïd, Mehdi & Perozo, Niriaska & Garnier, Simon & Helbing, Dirk & Theraulaz, Guy. (2010). *The Walking Behaviour of Pedestrian Social Groups and Its Impact on Crowd Dynamics*. PloS one. 5. e10047. 10.1371/journal.pone.0010047. 
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians.
 
@@ -53,41 +54,38 @@ And parameters:
 
 ### 3. Respulsive force of other pedestrians (SocialForce F<sub>soc</sub>)
 
-Other pedestrian will prokove a repulsive effect on the agent based on the distance, velocity and direction of their movements. 
-In [1], the direction of movement of the pedestrian is used to compute the respulsive potential <img src="https://render.githubusercontent.com/render/math?math=W_{pi}+"> 
+Other pedestrians will prokove a repulsive effect on the agent.
+In [3] the authors specify this interaction function based on two components, <img src="https://render.githubusercontent.com/render/math?math=f_{v}"> and <img src="https://render.githubusercontent.com/render/math?math=f_{\theta}">, describing the *deceleration* along the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and directional changes along the normal vector to the interaction direction oriented to the left, <img src="https://render.githubusercontent.com/render/math?math=N_{pi}">.
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{soc} = - \omega_{s} R_{pi} W_{pi} [b(R_{pi})]  +"> 
-with <img src="https://render.githubusercontent.com/render/math?math=R_{pi} = (R_{p} - R_{i}) +"> 
+<img src="https://render.githubusercontent.com/render/math?math=F_{soc} = \omega_{s} (f_{v} I_{pi} %2B f_{\theta} N_{pi})  +">
 
-And where the monotonic decreasing function of *b* has the form of an ellipse directed into the direction of motion 
-<img src="https://render.githubusercontent.com/render/math?math=2b = \sqrt{({\left \| R_{pi} \right \|} %2B \left \| R_{pi} - v_{i} \Delta t E_{i} \right \| )^2 - (v_{i} \Delta t)^2 }  +">
 
-However, in this implementation we compute two forces that are based on the interaction direction of the pedestrians.
-<img src="https://render.githubusercontent.com/render/math?math=F_{soc} = \omega_{s} (F_{Ivel} %2B F_{Iangle})  +">
+in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector <img src="https://render.githubusercontent.com/render/math?math=I_{pi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}+"> 
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{Ivel} = w_{vel} * I_{dpi}+">
-<img src="https://render.githubusercontent.com/render/math?math=F_{angle} = w_{ang} * I_{dpi}+">(¿¿¿normal vector to Idpi instead of ldpi vector???)
-
-in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector <img src="https://render.githubusercontent.com/render/math?math=I_{dpi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}+"> 
-
-With the interaction vector computed as:
+With the interaction vector computed as a composition of the direction of relative motion and in which the interaction pedestrian *i* is located:
 
 <img src="https://render.githubusercontent.com/render/math?math=I_{vpi} = \lambda_{s}(V_{p} - V_{i}) %2B \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}   +">
 
-And the monotonic descreasing functions in the form of exponentials:
 
-<img src="https://render.githubusercontent.com/render/math?math=w_{vel}  = - e^{-\left \| R_{i}-R_{p} \right \| / ((\gamma_{s} \left \| I_{vpi} \right \| ) - n\' \gamma_{s} \left \| I_{vpi} \right \| \theta)^2}+">
-<img src="https://render.githubusercontent.com/render/math?math=w_{ang}  = - e^{-\left \| R_{i}-R_{p} \right \| / ((\gamma_{s} \left \| I_{vpi} \right \| ) - n \gamma_{s} \left \| I_{vpi} \right \| \theta)^2}+">
+If <img src="https://render.githubusercontent.com/render/math?math=d_{pi}"> denotes the distance between two pedestrians *p* and *i* and <img src="https://render.githubusercontent.com/render/math?math=\theta+"> the angle between the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and the vector pointing from agent *p* to pedestrian *i*, we have:
 
-Note: the only differences are the parameteres *n'* and *n*
+<img src="https://render.githubusercontent.com/render/math?math=f_{v}  = - e^{(-d/B - (n_{s}\'B\theta)^2)}+">
+
+This represents an exponential decay of the deceleration with distance *d*.
+
+<img src="https://render.githubusercontent.com/render/math?math=f_{\theta}  = - k e^{(-d/B - (n_{s}B\theta)^2)}+">
+
+With: 
+- <img src="https://render.githubusercontent.com/render/math?math=k  = \frac{\theta}{\| \theta \|}+"> the sign of the angle <img src="https://render.githubusercontent.com/render/math?math=\theta+"> (=[0, 1, -1]). It takes into account the discontinuity in the angular motion, reflecting the binary decision to evade the other pedestrian either to the left or to the right.
+- <img src="https://render.githubusercontent.com/render/math?math=B  = \gamma_{s} \| I_{vpi} \|+">
 
 Parameters:
 
 - <img src="https://render.githubusercontent.com/render/math?math=\omega_{s}+"> Strength Factor of the desire to walk away the other pedestrians (*default: 2.1*).
-- <img src="https://render.githubusercontent.com/render/math?math=\gamma_{s}+"> (*default: 0.35*).
-- <img src="https://render.githubusercontent.com/render/math?math=\lambda_{s}+"> (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=\lambda_{s}+"> reflects the relative importance of the two directions (*default: 2.0*).
+- <img src="https://render.githubusercontent.com/render/math?math=\gamma_{s}+"> increases in the interaction direction by large relative speeds, while the repulsion towards the sides is reduced (*default: 0.35*).
 - <img src="https://render.githubusercontent.com/render/math?math=n_{s}+"> (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math={n_{s}}\' "> (*default: 3.0*).
+- <img src="https://render.githubusercontent.com/render/math?math={n_{s}}\' ">, n' > n, which corresponds to a larger angular interaction range. (*default: 3.0*). 
 
 
 ### 4. Force of interaction groups (GroupForce F<sub>group</sub>)

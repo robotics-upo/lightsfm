@@ -24,8 +24,10 @@ With:
 - <img src="https://render.githubusercontent.com/render/math?math=E_{desired}+"> Desired direction vector with:
 
 	<img src="https://render.githubusercontent.com/render/math?math=E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}+">
+
 	- <img src="https://render.githubusercontent.com/render/math?math=R_{goal}+"> the desired goal position.
 	- <img src="https://render.githubusercontent.com/render/math?math=R_{current}+"> the current agent position.
+
 - <img src="https://render.githubusercontent.com/render/math?math=V_{actual}+"> Actual velocity vector.
 
 And parameters:

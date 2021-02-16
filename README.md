@@ -92,7 +92,7 @@ Parameters:
 
 ### 4. Force of interaction groups (GroupForce F<sub>group</sub>)
 
-This force is a combination of another subforces that describes the formation of the social group.
+This force is a combination of another subforces that describes the formation of the social group, as describe in [3].
 
 <img src="https://render.githubusercontent.com/render/math?math=F_{group} = F_{ggaze} %2B F_{gcoh} %2B \sum F_{grep}">
 

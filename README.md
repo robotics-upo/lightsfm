@@ -57,7 +57,7 @@ And parameters:
 ### 3. Respulsive force of other pedestrians (SocialForce F<sub>soc</sub>)
 
 Other pedestrians will prokove a repulsive effect on the agent.
-In [3] the authors specify this interaction function based on two components, <img src="https://render.githubusercontent.com/render/math?math=f_{v}"> and <img src="https://render.githubusercontent.com/render/math?math=f_{\theta}">, describing the *deceleration* along the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and directional changes along the normal vector to the interaction direction oriented to the left, <img src="https://render.githubusercontent.com/render/math?math=N_{pi}">.
+In the initial model [1], a potential with the form of an ellipse directed in the motion direction of the pedestrian is proposed. However, in the empirical study carried out in [2], the authors specify a more advanced interaction function based on two components, <img src="https://render.githubusercontent.com/render/math?math=f_{v}"> and <img src="https://render.githubusercontent.com/render/math?math=f_{\theta}">, describing the *deceleration* along the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and directional changes along the normal vector to the interaction direction oriented to the left, <img src="https://render.githubusercontent.com/render/math?math=N_{pi}">.
 
 <img src="https://render.githubusercontent.com/render/math?math=F_{soc} = \omega_{s} (f_{v} I_{pi} %2B f_{\theta} N_{pi})  +">
 

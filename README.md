@@ -64,7 +64,7 @@ In the initial model [1], a potential with the form of an ellipse directed in th
 
 in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector <img src="https://render.githubusercontent.com/render/math?math=I_{pi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}+"> 
 
-With the interaction vector computed as a composition of the direction of relative motion and in which the interaction pedestrian *i* is located:
+And the interaction vector computed as a composition of the direction of relative motion and the direction in which the interaction pedestrian *i* is located:
 
 <img src="https://render.githubusercontent.com/render/math?math=I_{vpi} = \lambda_{s}(V_{p} - V_{i}) %2B \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}   +">
 

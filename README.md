@@ -4,7 +4,7 @@ A lightweight implementation of the Social Force Model for Social Local Navigati
 It is based on the initial model proposed by Helbing and Molnar [1] and extended for social groups by Moussaid et Al. [2][3]:
 
 - **[1]** Helbing, Dirk & Molnar, Peter. (1998). *Social Force Model for Pedestrian Dynamics*. Physical Review E. 51. 10.1103/PhysRevE.51.4282. 
-- **[2]** Moussaid M, Helbing D, Garnier S, Johansson A, Combe M, et al. (2009) Experimental study of the behavioural mechanisms underlying self-organization in human crowds. Proceedings of the Royal Society B: Biological Sciences 276: 2755–2762.
+- **[2]** Moussaid M, Helbing D, Garnier S, Johansson A, Combe M, et al. (2009) *Experimental study of the behavioural mechanisms underlying self-organization in human crowds*. Proceedings of the Royal Society B: Biological Sciences 276: 2755–2762.
 - **[3]** Moussaïd, Mehdi & Perozo, Niriaska & Garnier, Simon & Helbing, Dirk & Theraulaz, Guy. (2010). *The Walking Behaviour of Pedestrian Social Groups and Its Impact on Crowd Dynamics*. PloS one. 5. e10047. 10.1371/journal.pone.0010047. 
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians.

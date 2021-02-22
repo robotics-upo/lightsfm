@@ -123,21 +123,35 @@ inline RosMap::RosMap()
 {
   ros::NodeHandle n;
   ros::ServiceClient client = n.serviceClient<nav_msgs::GetMap>("static_map");
-  if (client.call(srv))
+
+  bool ok = false;
+  int count = 0;
+  ros::Rate r(0.5);
+  while(!ok && count < 3)
   {
-    std::vector<Pixel> pixels;
-    for (unsigned i = 0; i < srv.response.map.data.size(); i++)
+    count++;
+    if (client.call(srv))
     {
-      if (srv.response.map.data[i] == 100 || srv.response.map.data[i] == -1)
+      ok = true;
+      std::vector<Pixel> pixels;
+      for (unsigned i = 0; i < srv.response.map.data.size(); i++)
       {
-        pixels.emplace_back(i, getInfo().width);
+        if (srv.response.map.data[i] == 100 || srv.response.map.data[i] == -1)
+        {
+          pixels.emplace_back(i, getInfo().width);
+        }
       }
+      kdtree = generateKdTree(pixels, 0, pixels.size());
+      ROS_ASSERT(kdtree != NULL);
+      obstacles.resize(srv.response.map.data.size());
     }
-    kdtree = generateKdTree(pixels, 0, pixels.size());
-    ROS_ASSERT(kdtree != NULL);
-    obstacles.resize(srv.response.map.data.size());
+    else
+    {
+      ROS_INFO("[%s]. Wating to receive the static map...", ros::this_node::getName().c_str());
+      r.sleep();
+    }
   }
-  else
+  if(!ok)
   {
     ROS_FATAL("UNABLE TO GET MAP");
     ROS_BREAK();

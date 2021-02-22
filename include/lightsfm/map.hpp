@@ -2,7 +2,7 @@
 /**                                                                    */
 /** map.hpp                                                            */
 /**                                                                    */
-/** Copyright (c) 2016, Service Robotics Lab.                          */ 
+/** Copyright (c) 2016, Service Robotics Lab.                          */
 /**                     http://robotics.upo.es                         */
 /**                                                                    */
 /** All rights reserved.                                               */
@@ -12,7 +12,7 @@
 /** Jesus Capitan                                                      */
 /** Fernando Caballero                                                 */
 /** Luis Merino                                                        */
-/**                                                                    */   
+/**                                                                    */
 /** This software may be modified and distributed under the terms      */
 /** of the BSD license. See the LICENSE file for details.              */
 /**                                                                    */
@@ -28,32 +28,28 @@
 
 namespace sfm
 {
-
-
-
-
 class Map
 {
 public:
+  struct Obstacle
+  {
+    Obstacle() : distance(-1)
+    {
+    }
+    double distance;
+    utils::Vector2d position;
+  };
 
-	struct Obstacle
-	{
-		Obstacle() : distance(-1) {}
-		double distance;
-		utils::Vector2d position;
-	};
-
-	Map() {}
-	virtual ~Map() {}
-	virtual const Obstacle& getNearestObstacle(const utils::Vector2d& x) = 0;
-	virtual bool isObstacle(const utils::Vector2d& x) const = 0;
+  Map()
+  {
+  }
+  virtual ~Map()
+  {
+  }
+  virtual const Obstacle& getNearestObstacle(const utils::Vector2d& x) = 0;
+  virtual bool isObstacle(const utils::Vector2d& x) const = 0;
 };
-
-
 }
-
-
-
 
 
 

@@ -72,7 +72,7 @@ public:
     static RosMap singleton;
     return singleton;
   }
-  #define MAP RosMap::getInstance()
+#define MAP RosMap::getInstance()
   const nav_msgs::MapMetaData& getInfo() const
   {
     return srv.response.map.info;

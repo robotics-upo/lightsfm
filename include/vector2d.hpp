@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <geometry_msgs/Point.h>
+//#include <geometry_msgs/Point.h>
 #include <boost/functional/hash.hpp>
 
 #include "angle.hpp"
@@ -69,14 +69,14 @@ public:
     return y;
   }
 
-  geometry_msgs::Point toPoint() const
+  /*geometry_msgs::Point toPoint() const
   {
     geometry_msgs::Point p;
     p.x = x;
     p.y = y;
     p.z = 0;
     return p;
-  }
+  }*/
 
   Vector2d& set(double x, double y)
   {

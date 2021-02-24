@@ -12,6 +12,10 @@
 /** Jesus Capitan                                                      */
 /** Fernando Caballero                                                 */
 /** Luis Merino                                                        */
+/**                                                                    */
+/** Version 1.0:                                                       */
+/** Author:                                                            */
+/** Noé Pérez-Higueras                                                 */
 /**                                                                    */   
 /** This software may be modified and distributed under the terms      */
 /** of the BSD license. See the LICENSE file for details.              */
@@ -21,13 +25,13 @@
 /***********************************************************************/
 
 #include <iostream>
-#include <lightsfm/sfm.hpp>
-#include <lightsfm/astar.hpp>
+#include <sfm.hpp>
+//#include <lightsfm/astar.hpp>
 
 int main()
 {
 	sfm::SFM;
-	utils::AStar astar("prueba");
+	//utils::AStar astar("prueba");
 	std::cout<<"test"<<std::endl;
 	return 0;
 }

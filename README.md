@@ -151,10 +151,31 @@ Parameters:
 
 ## Code indications
 
+This is header-only library that does not depend on ROS.
+
 - **sfm.hpp** contains the methods for computating of all the described forces.
 - **angle.hpp and vector2d.hpp** contain different help structures and methods that are employed in the forces computation.
 - **map.hpp** contains a structure for representing the obstacles of the static map, and some virtual methods to check obstacles.
-- **rosmap.hpp** is a class that implements the virtual methods of map.hpp and uses ROS to obtain the static navigation map. It also implement a kd-tree to perform a nearest-neighbor search on the obstacle map.
+<!--- **rosmap.hpp** is a class that implements the virtual methods of map.hpp and uses ROS to obtain the static navigation map. It also implement a kd-tree to perform a nearest-neighbor search on the obstacle map.-->
 - **cmd_vel.hpp** make use of the forces in order to compute a velocity command to be sent to the robot. A aproximation based on Dynamic Window Approach is employed.
-- **astar.hpp** is an auxiliary class that contains the implementation of a Astar path planning algorithm.
+<!--- **astar.hpp** is an auxiliary class that contains the implementation of a Astar path planning algorithm.-->
+
+
+## How to use it
+
+First, you need to compile and install the library:
+`make`
+`make install`
+
+The library will be installed in the directory */usr/local/include/lightsfm*
+
+To use the library in you project, you need two things mainly:
+
+- First, to implement the virtual methods of the map.hpp header. So you can chose how to pass the obstacles map to the library.
+- Secondly, you need to use the structure Agent (sfm.hpp) to represent your pedestrians.
+- Finally, with your defined map and agents, you can call the methods:
+  `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces.
+  `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the scenario after a time step indicated by `dt`.
+
+An example of the use of the library can be seen in the ROS Pedlab simulator: https://github.com/robotics-upo/pedlab/tree/develop.
 

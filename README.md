@@ -164,7 +164,9 @@ This is header-only library that does not depend on ROS.
 ## How to use it
 
 First, you need to compile and install the library:
+
 `make`
+
 `make install`
 
 The library will be installed in the directory */usr/local/include/lightsfm*
@@ -174,7 +176,9 @@ To use the library in you project, you need two things mainly:
 - First, to implement the virtual methods of the map.hpp header. So you can chose how to pass the obstacles map to the library.
 - Secondly, you need to use the structure Agent (sfm.hpp) to represent your pedestrians.
 - Finally, with your defined map and agents, you can call the methods:
+
   `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces.
+
   `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the scenario after a time step indicated by `dt`.
 
 An example of the use of the library can be seen in the ROS Pedlab simulator: https://github.com/robotics-upo/pedlab/tree/develop.

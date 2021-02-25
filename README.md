@@ -157,7 +157,7 @@ This is header-only library that does not depend on ROS.
 - **angle.hpp and vector2d.hpp** contain different help structures and methods that are employed in the forces computation.
 - **map.hpp** contains a structure for representing the obstacles of the static map, and some virtual methods to check obstacles.
 <!--- **rosmap.hpp** is a class that implements the virtual methods of map.hpp and uses ROS to obtain the static navigation map. It also implement a kd-tree to perform a nearest-neighbor search on the obstacle map.-->
-- **cmd_vel.hpp** make use of the forces in order to compute a velocity command to be sent to the robot. A aproximation based on Dynamic Window Approach is employed.
+<!--- **cmd_vel.hpp** make use of the forces in order to compute a velocity command to be sent to the robot. A aproximation based on Dynamic Window Approach is employed. -->
 <!--- **astar.hpp** is an auxiliary class that contains the implementation of a Astar path planning algorithm.-->
 
 

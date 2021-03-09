@@ -147,6 +147,8 @@ struct Agent
 
   int groupId;
 
+  int id;
+
   Forces forces;
   Parameters params;
   std::vector<utils::Vector2d> obstacles1;
@@ -178,7 +180,9 @@ public:
 #define SFM SocialForceModel::getInstance()
 
   std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map = NULL) const;
+  void computeForces(Agent& me, std::vector<Agent>& agents, Map* map=NULL);
   std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;
+  void updatePosition(Agent& me, double dt) const;
 
 
 
@@ -190,9 +194,12 @@ private:
   utils::Vector2d computeDesiredForce(Agent& agent) const;
   void computeObstacleForce(Agent& agent, Map* map) const;
   void computeSocialForce(unsigned index, std::vector<Agent>& agents) const;
+  void computeSocialForce(Agent& agent, std::vector<Agent>& agents) const;
   void computeGroupForce(unsigned index, const utils::Vector2d& desiredDirection,
                          std::vector<Agent>& agents,
                          const std::unordered_map<int, Group>& groups) const;
+  void computeGroupForce(Agent& me, const utils::Vector2d& desiredDirection,
+                         std::vector<Agent>& agents, Group& group) const;
 };
 
 inline utils::Vector2d SocialForceModel::computeDesiredForce(Agent& agent) const
@@ -287,6 +294,36 @@ inline void SocialForceModel::computeSocialForce(unsigned index, std::vector<Age
   }
 }
 
+inline void SocialForceModel::computeSocialForce(Agent& me, std::vector<Agent>& agents) const
+{
+  //Agent& agent = agents[index];
+  me.forces.socialForce.set(0, 0);
+  for (unsigned i = 0; i < agents.size(); i++)
+  {
+    utils::Vector2d diff = agents[i].position - me.position;
+    utils::Vector2d diffDirection = diff.normalized();
+    utils::Vector2d velDiff = me.velocity - agents[i].velocity;
+    utils::Vector2d interactionVector = me.params.lambda * velDiff + diffDirection;
+    double interactionLength = interactionVector.norm();
+    utils::Vector2d interactionDirection = interactionVector / interactionLength;
+    utils::Angle theta = interactionDirection.angleTo(diffDirection);
+    double B = me.params.gamma * interactionLength;
+    double thetaRad = theta.toRadian();
+    double forceVelocityAmount =
+        -std::exp(-diff.norm() / B - PW(me.params.nPrime * B * thetaRad));
+    double forceAngleAmount =
+        -theta.sign() * std::exp(-diff.norm() / B - PW(me.params.n * B * thetaRad));
+    utils::Vector2d forceVelocity = forceVelocityAmount * interactionDirection;
+    utils::Vector2d forceAngle = forceAngleAmount * interactionDirection.leftNormalVector();
+    me.forces.socialForce += me.params.forceFactorSocial * (forceVelocity + forceAngle);
+    //if (i == 0)
+    //{
+    //  agent.forces.robotSocialForce =
+    //      agent.params.forceFactorSocial * (forceVelocity + forceAngle);
+    //}
+  }
+}
+
 
 inline void SocialForceModel::computeGroupForce(unsigned index,
                                                 const utils::Vector2d& desiredDirection,
@@ -365,6 +402,84 @@ inline void SocialForceModel::computeGroupForce(unsigned index,
 }
 
 
+
+
+inline void SocialForceModel::computeGroupForce(Agent& me,
+                                                const utils::Vector2d& desiredDirection,
+                                                std::vector<Agent>& agents, Group& group) const
+{
+  //Agent& agent = agents[index];
+  me.forces.groupForce.set(0, 0);
+  me.forces.groupGazeForce.set(0, 0);
+  me.forces.groupCoherenceForce.set(0, 0);
+  me.forces.groupRepulsionForce.set(0, 0);
+  if (group.agents.size() < 2)
+  {
+    return;
+  }
+
+  // Gaze force
+  utils::Vector2d com = group.center;
+  com = (1 / (double)(group.agents.size() - 1)) * (group.agents.size() * com - me.position);
+
+  utils::Vector2d relativeCom = com - me.position;
+  utils::Angle visionAngle = utils::Angle::fromDegree(90);
+  double elementProduct = desiredDirection.dot(relativeCom);
+  utils::Angle comAngle = utils::Angle::fromRadian(
+      std::acos(elementProduct / (desiredDirection.norm() * relativeCom.norm())));
+  if (comAngle > visionAngle)
+  {
+#ifdef _PAPER_VERSION_
+    utils::Angle necessaryRotation = comAngle - visionAngle;
+    me.forces.groupGazeForce = -necessaryRotation.toRadian() * desiredDirection;
+#else
+    double desiredDirectionSquared = desiredDirection.squaredNorm();
+    double desiredDirectionDistance = elementProduct / desiredDirectionSquared;
+    me.forces.groupGazeForce = desiredDirectionDistance * desiredDirection;
+#endif
+    me.forces.groupGazeForce *= me.params.forceFactorGroupGaze;
+  }
+
+  // Coherence force
+  com = group.center;
+  relativeCom = com - me.position;
+  double distance = relativeCom.norm();
+  double maxDistance = ((double)group.agents.size() - 1) / 2;
+#ifdef _PAPER_VERSION_
+  if (distance >= maxDistance)
+  {
+    me.forces.groupCoherenceForce = relativeCom.normalized();
+    me.forces.groupCoherenceForce *= me.params.forceFactorGroupCoherence;
+  }
+#else
+  me.forces.groupCoherenceForce = relativeCom;
+  double softenedFactor =
+      me.params.forceFactorGroupCoherence * (std::tanh(distance - maxDistance) + 1) / 2;
+  me.forces.groupCoherenceForce *= softenedFactor;
+#endif
+
+  // Repulsion Force
+  // Index 0 -> me 
+  for (unsigned i = 1; i < group.agents.size(); i++)
+  {
+
+    utils::Vector2d diff = me.position - agents.at(group.agents[i]).position;
+    if (diff.norm() < me.radius + agents.at(group.agents[i]).radius)
+    {
+      me.forces.groupRepulsionForce += diff;
+    }
+  }
+  me.forces.groupRepulsionForce *= me.params.forceFactorGroupRepulsion;
+
+  // Group Force
+  me.forces.groupForce = me.forces.groupGazeForce + me.forces.groupCoherenceForce +
+                            me.forces.groupRepulsionForce;
+}
+
+
+
+
+
 inline std::vector<Agent>& SocialForceModel::computeForces(std::vector<Agent>& agents, Map* map) const
 {
   std::unordered_map<int, Group> groups;
@@ -394,6 +509,36 @@ inline std::vector<Agent>& SocialForceModel::computeForces(std::vector<Agent>& a
   }
   return agents;
 }
+
+inline void SocialForceModel::computeForces(Agent& me, std::vector<Agent>& agents, Map* map)
+{
+	//form the group
+	Group mygroup;
+	if(me.groupId != -1)
+	{
+		mygroup.agents.push_back(me.id);
+		mygroup.center = me.position;
+		for(unsigned i=0; i<agents.size(); i++)
+		{
+			if(agents[i].groupId == me.groupId)
+			{
+				mygroup.agents.push_back(i);
+				mygroup.center += agents[i].position;
+			}
+		}
+		mygroup.center /= (double)mygroup.agents.size();
+	}
+
+	//Compute agent's forces
+	utils::Vector2d desiredDirection = computeDesiredForce(me);
+	computeObstacleForce(me, map);
+	computeSocialForce(me, agents);
+    computeGroupForce(me, desiredDirection, agents, mygroup);
+    me.forces.globalForce =
+        me.forces.desiredForce + me.forces.socialForce +
+        me.forces.obstacleForce + me.forces.groupForce;
+}
+
 
 
 inline void Agent::move(double dt)
@@ -450,5 +595,38 @@ inline std::vector<Agent>& SocialForceModel::updatePosition(std::vector<Agent>& 
   }
   return agents;
 }
+
+
+inline void SocialForceModel::updatePosition(Agent& agent, double dt) const
+{
+
+  utils::Vector2d initPos = agent.position;
+
+  agent.velocity += agent.forces.globalForce * dt;
+  if (agent.velocity.norm() > agent.desiredVelocity)
+  {
+	agent.velocity.normalize();
+    agent.velocity *= agent.desiredVelocity;
+  }
+  agent.yaw = agent.velocity.angle();
+  agent.position += agent.velocity * dt;
+  
+  agent.movement = agent.position - initPos;
+  if (!agent.goals.empty() &&
+       (agent.goals.front().center - agent.position).norm() <=
+            agent.goals.front().radius)
+  {
+      Goal g = agent.goals.front();
+      agent.goals.pop_front();
+      if (agent.cyclicGoals)
+      {
+        agent.goals.push_back(g);
+      }
+   
+  }
+}
+
+
+
 }
 #endif

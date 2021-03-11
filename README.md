@@ -181,5 +181,5 @@ To use the library in you project, you need two things mainly:
 
   `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the scenario after a time step indicated by `dt`.
 
-An example of the use of the library can be seen in the ROS Pedlab simulator: https://github.com/robotics-upo/pedlab/tree/develop.
+An example of the use of the library can be seen in the ROS Pedlab simulator: https://github.com/robotics-upo/pedlab
 

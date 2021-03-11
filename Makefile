@@ -1,5 +1,6 @@
+
 CFlags=-c -Wall -O3  -std=gnu++11 -Iinclude 
-LDFlags=  -ltinyxml
+#LDFlags=  -ltinyxml
 CC=g++
 RM=rm
 
@@ -20,9 +21,6 @@ clean:
 install:
 	@mkdir -p /usr/local/include/lightsfm
 	@cp include/* /usr/local/include/lightsfm
-
-
-
 
 
 

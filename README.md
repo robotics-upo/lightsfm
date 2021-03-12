@@ -167,7 +167,7 @@ First, you need to compile and install the library:
 
 `make`
 
-`make install`
+`sudo make install`
 
 The library will be installed in the directory */usr/local/include/lightsfm*
 

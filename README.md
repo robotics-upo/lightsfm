@@ -178,8 +178,11 @@ To use the library in you project, you need two things mainly:
 - Finally, with your defined map and agents, you can call different methods:
 
   `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces for all the agents.
+
   `void computeForces(Agent& me, std::vector<Agent>& agents, Map* map);` To compute the social forces for the indicated agent.
+
   `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the state of all the agents after a time step indicated by `dt`.
+
   `void updatePosition(Agent& me, double dt) const;` To update the state of the indicated agent after a time step indicated by `dt`.
 
 Some examples of the use of the library can be seen in:

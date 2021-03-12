@@ -175,11 +175,16 @@ To use the library in you project, you need two things mainly:
 
 - First, to implement the virtual methods of the map.hpp header. So you can chose how to pass the obstacles map to the library.
 - Secondly, you need to use the structure Agent (sfm.hpp) to represent your pedestrians.
-- Finally, with your defined map and agents, you can call the methods:
+- Finally, with your defined map and agents, you can call different methods:
 
-  `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces.
+  `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces for all the agents.
+  `void computeForces(Agent& me, std::vector<Agent>& agents, Map* map);` To compute the social forces for the indicated agent.
+  `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the state of all the agents after a time step indicated by `dt`.
+  `void updatePosition(Agent& me, double dt) const;` To update the state of the indicated agent after a time step indicated by `dt`.
 
-  `std::vector<Agent>& updatePosition(std::vector<Agent>& agents, double dt) const;` To update the scenario after a time step indicated by `dt`.
+Some examples of the use of the library can be seen in:
 
-An example of the use of the library can be seen in the ROS Pedlab simulator: https://github.com/robotics-upo/pedlab
+- The ROS Pedlab simulator: https://github.com/robotics-upo/pedlab
+- The walking pedestrian plugin for Gazebo: https://github.com/robotics-upo/gazebo_sfm_plugin
+Or in the 
 

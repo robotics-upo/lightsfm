@@ -189,5 +189,4 @@ Some examples of the use of the library can be seen in:
 
 - The ROS Pedlab simulator: https://github.com/robotics-upo/pedlab
 - The walking pedestrian plugin for Gazebo: https://github.com/robotics-upo/gazebo_sfm_plugin
-Or in the 
 

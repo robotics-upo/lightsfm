@@ -151,11 +151,11 @@ Parameters:
 
 ## Code indications
 
-This is header-only library that does not depend on ROS.
+This is header-only library that does not depend on ROS. All the agents positions, velocities, obstacles, etc must be provided according to the same selected coordinate frame. 
 
 - **sfm.hpp** contains the methods for computating of all the described forces.
 - **angle.hpp and vector2d.hpp** contain different help structures and methods that are employed in the forces computation.
-- **map.hpp** contains a structure for representing the obstacles of the static map, and some virtual methods to check obstacles.
+- **map.hpp** contains an optional structure for representing the obstacles of the static map, and some virtual methods to check obstacles.
 <!--- **rosmap.hpp** is a class that implements the virtual methods of map.hpp and uses ROS to obtain the static navigation map. It also implement a kd-tree to perform a nearest-neighbor search on the obstacle map.-->
 <!--- **cmd_vel.hpp** make use of the forces in order to compute a velocity command to be sent to the robot. A aproximation based on Dynamic Window Approach is employed. -->
 <!--- **astar.hpp** is an auxiliary class that contains the implementation of a Astar path planning algorithm.-->
@@ -173,9 +173,10 @@ The library will be installed in the directory */usr/local/include/lightsfm*
 
 To use the library in you project, you need two things mainly:
 
-- First, to implement the virtual methods of the map.hpp header. So you can chose how to pass the obstacles map to the library.
-- Secondly, you need to use the structure Agent (sfm.hpp) to represent your pedestrians.
-- Finally, with your defined map and agents, you can call different methods:
+
+- First, you need to use the structure Agent (sfm.hpp) to represent your pedestrians.
+- Secondly, to define you agents' obstacles. Two options: by implementing the virtual methods of the map.hpp header (to pass them through Map* map). Or by filling the obstacles vectors of the agents.
+- Finally, with your defined obstacles and agents, you can call different methods:
 
   `std::vector<Agent>& computeForces(std::vector<Agent>& agents, Map* map) const;` To compute the social forces for all the agents.
 

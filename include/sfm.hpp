@@ -176,39 +176,6 @@ SocialForceModel::computeDesiredForce(Agent &agent) const {
   return desiredDirection;
 }
 
-// inline void SocialForceModel::computeObstacleForce(Agent &agent,
-//                                                    Map *map) const {
-//   if (agent.obstacles1.size() > 0 || agent.obstacles2.size() > 0) {
-//     agent.forces.obstacleForce.set(0, 0);
-//     for (unsigned i = 0; i < agent.obstacles1.size(); i++) {
-//       double distance = agent.obstacles1[i].norm() - agent.radius;
-//       agent.forces.obstacleForce +=
-//           agent.params.forceFactorObstacle *
-//           std::exp(-distance / agent.params.forceSigmaObstacle) *
-//           (-agent.obstacles1[i]).normalized();
-//     }
-//     for (unsigned i = 0; i < agent.obstacles2.size(); i++) {
-//       double distance = agent.obstacles2[i].norm() - agent.radius;
-//       agent.forces.obstacleForce +=
-//           agent.params.forceFactorObstacle *
-//           std::exp(-distance / agent.params.forceSigmaObstacle) *
-//           (-agent.obstacles2[i]).normalized();
-//     }
-//     agent.forces.obstacleForce /=
-//         (double)(agent.obstacles1.size() + agent.obstacles2.size());
-//   } else if (map != NULL) {
-//     const Map::Obstacle &obs = map->getNearestObstacle(agent.position);
-//     utils::Vector2d minDiff = agent.position - obs.position;
-//     double distance = minDiff.norm() - agent.radius;
-//     agent.forces.obstacleForce =
-//         agent.params.forceFactorObstacle *
-//         std::exp(-distance / agent.params.forceSigmaObstacle) *
-//         minDiff.normalized();
-//   } else {
-//     agent.forces.obstacleForce.set(0, 0);
-//   }
-// }
-
 inline void SocialForceModel::computeObstacleForce(Agent &agent,
                                                    Map *map) const {
 
@@ -308,6 +275,9 @@ SocialForceModel::computeSocialForce(Agent &me,
   // Agent& agent = agents[index];
   me.forces.socialForce.set(0, 0);
   for (unsigned i = 0; i < agents.size(); i++) {
+    if (agents[i].id == me.id) {
+      continue;
+    }
     utils::Vector2d diff = agents[i].position - me.position;
     utils::Vector2d diffDirection = diff.normalized();
     utils::Vector2d velDiff = me.velocity - agents[i].velocity;
@@ -513,6 +483,9 @@ inline void SocialForceModel::computeForces(Agent &me,
     mygroup.agents.push_back(me.id);
     mygroup.center = me.position;
     for (unsigned i = 0; i < agents.size(); i++) {
+      if (agents[i].id == me.id) {
+        continue;
+      }
       if (agents[i].groupId == me.groupId) {
         mygroup.agents.push_back(i);
         mygroup.center += agents[i].position;

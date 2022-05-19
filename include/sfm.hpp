@@ -553,6 +553,7 @@ SocialForceModel::updatePosition(std::vector<Agent> &agents, double dt) const {
 inline void SocialForceModel::updatePosition(Agent &agent, double dt) const {
 
   utils::Vector2d initPos = agent.position;
+  utils::Angle initYaw = agent.yaw;
 
   agent.velocity += agent.forces.globalForce * dt;
   if (agent.velocity.norm() > agent.desiredVelocity) {
@@ -561,6 +562,9 @@ inline void SocialForceModel::updatePosition(Agent &agent, double dt) const {
   }
   agent.yaw = agent.velocity.angle();
   agent.position += agent.velocity * dt;
+
+  agent.linearVelocity = agent.velocity.norm();
+  agent.angularVelocity = (agent.yaw - initYaw).toRadian() / dt;
 
   agent.movement = agent.position - initPos;
   if (!agent.goals.empty() &&

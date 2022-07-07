@@ -186,8 +186,7 @@ To use the library in you project, you need two things mainly:
 
   `void updatePosition(Agent& me, double dt) const;` To update the state of the indicated agent after a time step indicated by `dt`.
 
-Some examples of the use of the library can be seen in:
+An example of the use of the library can be seen in:
 
-- The ROS Pedlab simulator: https://github.com/robotics-upo/pedlab
 - The walking pedestrian plugin for Gazebo: https://github.com/robotics-upo/gazebo_sfm_plugin
 

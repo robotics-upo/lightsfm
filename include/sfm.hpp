@@ -28,6 +28,7 @@
 #include <cmath>
 #include <unordered_map>
 #include <vector>
+#include <iostream>
 
 namespace sfm {
 struct Forces {
@@ -47,7 +48,7 @@ struct Parameters {
       : forceFactorDesired(2.0), forceFactorObstacle(10),
         forceSigmaObstacle(0.2), forceFactorSocial(2.1),
         forceFactorGroupGaze(3.0), forceFactorGroupCoherence(2.0),
-        forceFactorGroupRepulsion(1.0), lambda(2.0), gamma(0.35), n(2.0),
+        forceFactorGroupRepulsion(1.0), lambda(2.0), gamma(0.35), n(2.0), epsilon(0.005),
         nPrime(3.0), relaxationTime(0.5) {}
 
   double forceFactorDesired;
@@ -60,6 +61,7 @@ struct Parameters {
   double lambda;
   double gamma;
   double n;
+  double epsilon;
   double nPrime;
   double relaxationTime;
 };
@@ -242,6 +244,7 @@ SocialForceModel::computeSocialForce(unsigned index,
       continue;
     }
     utils::Vector2d diff = agents[i].position - agent.position;
+
     utils::Vector2d diffDirection = diff.normalized();
     utils::Vector2d velDiff = agent.velocity - agents[i].velocity;
     utils::Vector2d interactionVector =
@@ -249,9 +252,11 @@ SocialForceModel::computeSocialForce(unsigned index,
     double interactionLength = interactionVector.norm();
     utils::Vector2d interactionDirection =
         interactionVector / interactionLength;
-    utils::Angle theta = interactionDirection.angleTo(diffDirection);
+
     double B = agent.params.gamma * interactionLength;
-    double thetaRad = theta.toRadian();
+    utils::Angle theta = interactionDirection.angleTo(diffDirection);
+    theta.setRadian(theta.toRadian() + (agent.params.epsilon * B));
+    double thetaRad = theta.toRadian()  ;
     double forceVelocityAmount =
         -std::exp(-diff.norm() / B - PW(agent.params.nPrime * B * thetaRad));
     double forceAngleAmount =

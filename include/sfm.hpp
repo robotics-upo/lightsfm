@@ -217,8 +217,8 @@ inline void SocialForceModel::computeObstacleForce(Agent &agent,
           std::exp(-distance / agent.params.forceSigmaObstacle) *
           minDiff.normalized();
     }
-    agent.forces.obstacleForce /=
-        (double)(agent.obstacles1.size() + agent.obstacles2.size());
+    //agent.forces.obstacleForce /=
+    //    (double)(agent.obstacles1.size() + agent.obstacles2.size());
   } else if (map != NULL) {
     const Map::Obstacle &obs = map->getNearestObstacle(agent.position);
     utils::Vector2d minDiff = agent.position - obs.position;

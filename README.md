@@ -17,91 +17,91 @@ FEDER co-financing percentage 80%
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians.
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{total} = F_{goal} %2B \sum F_{obs} %2B \sum F_{soc} %2B F_{group}">
+$F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$
 
 ***Note: vectors are indicated with capital letters**
 
 ### 1. Attractive force to reach the goal (DesiredForce F<sub>goal</sub>)
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{goal} = \omega_{g}+\frac{1}{\sigma_{g}}+(v_{desired}E_{desired} - V_{actual})">
+$F_{goal} = \omega_{g}+\frac{1}{\sigma_{g}}+(v_{desired}E_{desired} - V_{actual})$
 
 With:
 
-- <img src="https://render.githubusercontent.com/render/math?math=v_{desired}+"> Desired velocity value.
-- <img src="https://render.githubusercontent.com/render/math?math=E_{desired}+"> Desired direction vector with:
+- $v_{desired}+$ Desired velocity value.
+- $E_{desired}+$ Desired direction vector with:
 
-	<img src="https://render.githubusercontent.com/render/math?math=E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}+">
+	$E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}+$
 
-	- <img src="https://render.githubusercontent.com/render/math?math=R_{goal}+"> the desired goal position.
-	- <img src="https://render.githubusercontent.com/render/math?math=R_{current}+"> the current agent position.
+	- $R_{goal}+$ the desired goal position.
+	- $R_{current}+$ the current agent position.
 
-- <img src="https://render.githubusercontent.com/render/math?math=V_{actual}+"> Actual velocity vector.
+- $V_{actual}+$ Actual velocity vector.
 
 And parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{g}+"> Strength Factor of the desire to reach the goal (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math=\sigma_{g}+"> Relaxation time (*default: 0.5 seg*).
+- $\omega_{g}+$ Strength Factor of the desire to reach the goal (*default: 2.0*).
+- $\sigma_{g}+$ Relaxation time (*default: 0.5 seg*).
 
 
 ### 2. Repulsive force of obstacles (ObstacleForce F<sub>obs</sub>)
 
 We use a monotonic decreasing potential of the force (an exponential in our case) based on the distance between the agent and the obstacles.
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{obs} = - \omega_{o}+e^{(-R_{po} / \sigma_{o})} U_{R_{po}}">
+$F_{obs} = - \omega_{o}+e^{(-R_{po} / \sigma_{o})} U_{R_{po}}$
 
 With:
 
-- <img src="https://render.githubusercontent.com/render/math?math=U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}+">Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
-- <img src="https://render.githubusercontent.com/render/math?math=\R_{po} = R_{p} - R_{o}+">  Position of the obstacle *o* relative to the pedestrian *p*.
+- $U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}+$ Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
+- $R_{po} = R_{p} - R_{o}+$  Position of the obstacle *o* relative to the pedestrian *p*.
 
 And parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{o}+"> Strength Factor of the desire to walk away the obstacles (*default: 10.0*).
-- <img src="https://render.githubusercontent.com/render/math?math=\sigma_{o}+"> Exponential parameter (*default: 0.2*).
+- $\omega_{o}+$ Strength Factor of the desire to walk away the obstacles (*default: 10.0*).
+- $\sigma_{o}+$ Exponential parameter (*default: 0.2*).
 
 
 
 ### 3. Respulsive force of other pedestrians (SocialForce F<sub>soc</sub>)
 
 Other pedestrians will prokove a repulsive effect on the agent.
-In the initial model [1], a potential with the form of an ellipse directed in the motion direction of the pedestrian is proposed. However, in the empirical study carried out in [2], the authors specify a more advanced interaction function based on two components, <img src="https://render.githubusercontent.com/render/math?math=f_{v}"> and <img src="https://render.githubusercontent.com/render/math?math=f_{\theta}">, describing the *deceleration* along the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and directional changes along the normal vector to the interaction direction oriented to the left, <img src="https://render.githubusercontent.com/render/math?math=N_{pi}">.
+In the initial model [1], a potential with the form of an ellipse directed in the motion direction of the pedestrian is proposed. However, in the empirical study carried out in [2], the authors specify a more advanced interaction function based on two components, $f_{v}$ and $f_{\theta}$, describing the *deceleration* along the interaction direction $I_{pi}$ and directional changes along the normal vector to the interaction direction oriented to the left, $N_{pi}$.
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{soc} = \omega_{s} (f_{v} I_{pi} %2B f_{\theta} N_{pi})  +">
+$F_{soc} = \omega_{s} (f_{v} I_{pi} + f_{\theta} N_{pi})$
 
 
-in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector <img src="https://render.githubusercontent.com/render/math?math=I_{pi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}+"> 
+in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector $I_{pi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}$ 
 
 And the interaction vector computed as a composition of the direction of relative motion and the direction in which the interaction pedestrian *i* is located:
 
-<img src="https://render.githubusercontent.com/render/math?math=I_{vpi} = \lambda_{s}(V_{p} - V_{i}) %2B \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}   +">
+$I_{vpi} = \lambda_{s}(V_{p} - V_{i}) + \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}$
 
 
-If <img src="https://render.githubusercontent.com/render/math?math=d_{pi}"> denotes the distance between two pedestrians *p* and *i* and <img src="https://render.githubusercontent.com/render/math?math=\theta+"> the angle between the interaction direction <img src="https://render.githubusercontent.com/render/math?math=I_{pi}"> and the vector pointing from agent *p* to pedestrian *i*, we have:
+If $d_{pi}$ denotes the distance between two pedestrians *p* and *i* and $\theta$ the angle between the interaction direction $I_{pi}$ and the vector pointing from agent *p* to pedestrian *i*, we have:
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{v}  = - e^{(-d/B - (n_{s}\'B\theta)^2)}+">
+$f_{v}  = - e^{(-d/B - (n_{s}\'B\theta)^2)}$
 
 This represents an exponential decay of the deceleration with distance *d*.
 
-<img src="https://render.githubusercontent.com/render/math?math=f_{\theta}  = - k e^{(-d/B - (n_{s}B\theta)^2)}+">
+$f_{\theta}  = - k e^{(-d/B - (n_{s}B\theta)^2)}$
 
 With: 
-- <img src="https://render.githubusercontent.com/render/math?math=k  = \frac{\theta}{\| \theta \|}+"> the sign of the angle <img src="https://render.githubusercontent.com/render/math?math=\theta+"> (=[0, 1, -1]). It takes into account the discontinuity in the angular motion, reflecting the binary decision to evade the other pedestrian either to the left or to the right.
-- <img src="https://render.githubusercontent.com/render/math?math=B  = \gamma_{s} \| I_{vpi} \|+">
+- $k  = \frac{\theta}{\| \theta \|}$ the sign of the angle $\theta$ (=[0, 1, -1]). It takes into account the discontinuity in the angular motion, reflecting the binary decision to evade the other pedestrian either to the left or to the right.
+- $B  = \gamma_{s} \| I_{vpi} \|$
 
 Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{s}+"> Strength Factor of the desire to walk away the other pedestrians (*default: 2.1*).
-- <img src="https://render.githubusercontent.com/render/math?math=\lambda_{s}+"> reflects the relative importance of the two directions (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math=\gamma_{s}+"> increases in the interaction direction by large relative speeds, while the repulsion towards the sides is reduced (*default: 0.35*).
-- <img src="https://render.githubusercontent.com/render/math?math=n_{s}+"> (*default: 2.0*).
-- <img src="https://render.githubusercontent.com/render/math?math={n_{s}}\' ">, n' > n, which corresponds to a larger angular interaction range. (*default: 3.0*). 
+- $\omega_{s}$ Strength Factor of the desire to walk away the other pedestrians (*default: 2.1*).
+- $\lambda_{s}$ reflects the relative importance of the two directions (*default: 2.0*).
+- $\gamma_{s}$ increases in the interaction direction by large relative speeds, while the repulsion towards the sides is reduced (*default: 0.35*).
+- $n_{s}$ (*default: 2.0*).
+- ${n_{s}}\' $, n' > n, which corresponds to a larger angular interaction range. (*default: 3.0*). 
 
 
 ### 4. Force of interaction groups (GroupForce F<sub>group</sub>)
 
 This force is a combination of another subforces that describes the formation of the social group, as described in [3].
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{group} = F_{ggaze} %2B F_{gcoh} %2B \sum F_{grep}">
+$F_{group} = F_{ggaze} + F_{gcoh} + \sum F_{grep}$
 
 
 #### 4.1. Force of vision field of the group (GroupGazeForce F<sub>ggaze</sub>)
@@ -110,51 +110,51 @@ It is based on the rotation angle of the pedestrian's head (gazing direction) so
 The greater the head rotation the less comfortable is the turning for walking, and therefore the pedestrian adjusts its position to reduce the head rotation.
 In our implementation we can not detect the gaze direction, so we check if the group's mass center is beyond the vision field of the pedestrian according to his/her movement direction. Therefore, if the angle to communicate with the group (look to the mass center) is greater than the vision field we apply the following force:
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{ggaze} = \omega_{gz}+\alpha+V_{desired}">
+$F_{ggaze} = \omega_{gz}+\alpha+V_{desired}$
 
 With:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\alpha+"> Value based on the desired direction and the distante to the mass center.
+- $\alpha$ Value based on the desired direction and the distante to the mass center.
 
-	<img src="https://render.githubusercontent.com/render/math?math=\alpha = V_{desired}\cdot R_{pg} / (\left \| V_{desired} \right \|)^2+">
+	$\alpha = V_{desired}\cdot R_{pg} / (\left \| V_{desired} \right \|)^2$
 
-Where <img src="https://render.githubusercontent.com/render/math?math=R_{pg} +"> is the position of the group's mass center *g* relative to the pedestrian *p*.
+Where $R_{pg}$ is the position of the group's mass center *g* relative to the pedestrian *p*.
 
-- <img src="https://render.githubusercontent.com/render/math?math=\V_{desired}+"> Desired direction vector.
+- $V_{desired}$ Desired direction vector.
 
 Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{gz}+"> Strength Factor of the vision of the group (*default: 3.0*).
+- $\omega_{gz}$ Strength Factor of the vision of the group (*default: 3.0*).
 
 
 #### 4.2. Attraction force to the group's center of mass (GroupCoherenceForce F<sub>gcoh</sub>)
 
 The agent feels an attraction to keep close to its interaction group (to keep the coherence of the group).
-<img src="https://render.githubusercontent.com/render/math?math=F_{gcoh} = \omega_{gc}+q_{a}+R_{pg}">
+$F_{gcoh} = \omega_{gc}+q_{a}+R_{pg}$
 
 With:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\R_{pg}+"> is the position of the group's mass center *g* relative to the pedestrian *p*.
-- <img src="https://render.githubusercontent.com/render/math?math=q_{a}+"> is a saturation factor in the range [-1,1]  based on the distance to the group's center and a distance threshold.
-	<img src="https://render.githubusercontent.com/render/math?math=q_{a} = tanh(d_{pg}-((n-1)/2))+"> with <img src="https://render.githubusercontent.com/render/math?math=d_{pg}+"> the Euclidean distance between the agent *p* and the group's center *g*; and *n* the number of agents in the group.
+- $R_{pg}$ is the position of the group's mass center *g* relative to the pedestrian *p*.
+- $q_{a}$ is a saturation factor in the range [-1,1]  based on the distance to the group's center and a distance threshold.
+	$q_{a} = tanh(d_{pg}-((n-1)/2))$ with $d_{pg}$ the Euclidean distance between the agent *p* and the group's center *g*; and *n* the number of agents in the group.
 	
 	Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{gc}+"> Strength Factor of the desire to walk with the group (*default: 2.0*).
+- $\omega_{gc}$ Strength Factor of the desire to walk with the group (*default: 2.0*).
 
 #### 4.3. Respulsion force of overlaping group members (GroupRespulsionForce F<sub>grep</sub>)
 Repulsion effect so that the group members do not overlap each other.
 
-<img src="https://render.githubusercontent.com/render/math?math=F_{grep} = - \omega_{gr}+q_{r}+R_{pi}">
+$F_{grep} = - \omega_{gr}+q_{r}+R_{pi}$
 
 With:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\R_{pi}+"> is the position of the group member *i* relative to the group member *p*.
-- <img src="https://render.githubusercontent.com/render/math?math=q_{r}+"> is an activation parameter that takes value *1* when the Euclidean distance between the agents *p* and *i* is smaller than a threshold value *d*, that is one body diameter plus some safety distance, otherwise *0*.
+- $R_{pi}$ is the position of the group member *i* relative to the group member *p*.
+- $q_{r}$ is an activation parameter that takes value *1* when the Euclidean distance between the agents *p* and *i* is smaller than a threshold value *d*, that is one body diameter plus some safety distance, otherwise *0*.
 
 Parameters:
 
-- <img src="https://render.githubusercontent.com/render/math?math=\omega_{gr}+"> Strength Factor for not overlapping the group's members (*default: 1.0*).
+- $\omega_{gr}$ Strength Factor for not overlapping the group's members (*default: 1.0*).
 
 ## Code indications
 

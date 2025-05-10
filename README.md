@@ -51,8 +51,8 @@ $F_{obs} = - \omega_{o}+e^{(-R_{po} / \sigma_{o})} U_{R_{po}}$
 
 With:
 
-- $U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}+$Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
-- $\R_{po} = R_{p} - R_{o}+$  Position of the obstacle *o* relative to the pedestrian *p*.
+- $U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}+$ Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
+- $R_{po} = R_{p} - R_{o}+$  Position of the obstacle *o* relative to the pedestrian *p*.
 
 And parameters:
 
@@ -118,9 +118,9 @@ With:
 
 	$\alpha = V_{desired}\cdot R_{pg} / (\left \| V_{desired} \right \|)^2$
 
-Where $R_{pg} $ is the position of the group's mass center *g* relative to the pedestrian *p*.
+Where $R_{pg}$ is the position of the group's mass center *g* relative to the pedestrian *p*.
 
-- $\V_{desired}$ Desired direction vector.
+- $V_{desired}$ Desired direction vector.
 
 Parameters:
 
@@ -134,7 +134,7 @@ $F_{gcoh} = \omega_{gc}+q_{a}+R_{pg}$
 
 With:
 
-- $\R_{pg}$ is the position of the group's mass center *g* relative to the pedestrian *p*.
+- $R_{pg}$ is the position of the group's mass center *g* relative to the pedestrian *p*.
 - $q_{a}$ is a saturation factor in the range [-1,1]  based on the distance to the group's center and a distance threshold.
 	$q_{a} = tanh(d_{pg}-((n-1)/2))$ with $d_{pg}$ the Euclidean distance between the agent *p* and the group's center *g*; and *n* the number of agents in the group.
 	
@@ -149,7 +149,7 @@ $F_{grep} = - \omega_{gr}+q_{r}+R_{pi}$
 
 With:
 
-- $\R_{pi}$ is the position of the group member *i* relative to the group member *p*.
+- $R_{pi}$ is the position of the group member *i* relative to the group member *p*.
 - $q_{r}$ is an activation parameter that takes value *1* when the Euclidean distance between the agents *p* and *i* is smaller than a threshold value *d*, that is one body diameter plus some safety distance, otherwise *0*.
 
 Parameters:

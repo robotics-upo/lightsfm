@@ -17,7 +17,7 @@ FEDER co-financing percentage 80%
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians.
 
-$F_{total} = F_{goal} %2B \sum F_{obs} %2B \sum F_{soc} %2B F_{group}$
+$F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$
 
 ***Note: vectors are indicated with capital letters**
 
@@ -66,14 +66,14 @@ And parameters:
 Other pedestrians will prokove a repulsive effect on the agent.
 In the initial model [1], a potential with the form of an ellipse directed in the motion direction of the pedestrian is proposed. However, in the empirical study carried out in [2], the authors specify a more advanced interaction function based on two components, $f_{v}$ and $f_{\theta}$, describing the *deceleration* along the interaction direction $I_{pi}$ and directional changes along the normal vector to the interaction direction oriented to the left, $N_{pi}$.
 
-$F_{soc} = \omega_{s} (f_{v} I_{pi} %2B f_{\theta} N_{pi})  $
+$F_{soc} = \omega_{s} (f_{v} I_{pi} + f_{\theta} N_{pi})$
 
 
 in which the interaction direction between the agent *p* and the pedestrian *i*, is the unit vector $I_{pi} =  \frac{I_{vpi}}{\left \| I_{vpi} \right \|}$ 
 
 And the interaction vector computed as a composition of the direction of relative motion and the direction in which the interaction pedestrian *i* is located:
 
-$I_{vpi} = \lambda_{s}(V_{p} - V_{i}) %2B \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}   $
+$I_{vpi} = \lambda_{s}(V_{p} - V_{i}) + \frac{R_{i}-R_{p}}{\left \| R_{i}-R_{p} \right \|}$
 
 
 If $d_{pi}$ denotes the distance between two pedestrians *p* and *i* and $\theta$ the angle between the interaction direction $I_{pi}$ and the vector pointing from agent *p* to pedestrian *i*, we have:
@@ -101,7 +101,7 @@ Parameters:
 
 This force is a combination of another subforces that describes the formation of the social group, as described in [3].
 
-$F_{group} = F_{ggaze} %2B F_{gcoh} %2B \sum F_{grep}$
+$F_{group} = F_{ggaze} + F_{gcoh} + \sum F_{grep}$
 
 
 #### 4.1. Force of vision field of the group (GroupGazeForce F<sub>ggaze</sub>)

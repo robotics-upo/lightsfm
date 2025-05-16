@@ -28,7 +28,6 @@
 #include <cmath>
 #include <unordered_map>
 #include <vector>
-#include <iostream>
 
 namespace sfm {
 struct Forces {

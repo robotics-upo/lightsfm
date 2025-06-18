@@ -17,7 +17,9 @@ FEDER co-financing percentage 80%
 
 The model consists on the definition of different attractive and repulsive forces that describe the local navigation behavior of pedestrians.
 
+
 $$F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$$
+
 
 ***Note: vectors are indicated with capital letters**
 

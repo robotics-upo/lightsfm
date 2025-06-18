@@ -23,7 +23,7 @@ $$F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$$
 
 ### 1. Attractive force to reach the goal (DesiredForce $F_{goal}$)
 
-$$F_{goal} = \omega_{g}+\frac{1}{\sigma_{g}}+(v_{desired}E_{desired} - V_{actual})$$
+$$F_{goal} = \omega_{g}\frac{1}{\sigma_{g}}(v_{desired}E_{desired} - V_{actual})$$
 
 With:
 
@@ -45,7 +45,7 @@ And parameters:
 
 We use a monotonic decreasing potential of the force (an exponential in our case) based on the distance between the agent and the obstacles.
 
-$$F_{obs} = - \omega_{o} + e^{(-R_{po} / \sigma_{o})} U_{R_{po}}$$
+$$F_{obs} = - \omega_{o}e^{(-R_{po} / \sigma_{o})} U_{R_{po}}$$
 
 With:
 
@@ -103,7 +103,7 @@ It is based on the rotation angle of the pedestrian's head (gazing direction) so
 The greater the head rotation the less comfortable is the turning for walking, and therefore the pedestrian adjusts its position to reduce the head rotation.
 In our implementation we can not detect the gaze direction, so we check if the group's mass center is beyond the vision field of the pedestrian according to his/her movement direction. Therefore, if the angle to communicate with the group (look to the mass center) is greater than the vision field we apply the following force:
 
-$$F_{ggaze} = \omega_{gz}+\alpha+V_{desired}$$
+$$F_{ggaze} = \omega_{gz} \alpha V_{desired}$$
 
 With:
 
@@ -122,7 +122,7 @@ Parameters:
 #### 4.2. Attraction force to the group's center of mass (GroupCoherenceForce $F_{gcoh}$)
 
 The agent feels an attraction to keep close to its interaction group (to keep the coherence of the group).
-$$F_{gcoh} = \omega_{gc}+q_{a}+R_{pg}$$
+$$F_{gcoh} = \omega_{gc} q_{a} R_{pg}$$
 
 With:
 
@@ -137,7 +137,7 @@ Parameters:
 
 Repulsion effect so that the group members do not overlap each other.
 
-$$F_{grep} = - \omega_{gr}+q_{r}+R_{pi}$$
+$$F_{grep} = - \omega_{gr} q_{r} R_{pi}$$
 
 With:
 

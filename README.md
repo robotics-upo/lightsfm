@@ -23,24 +23,24 @@ $F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$
 
 ### 1. Attractive force to reach the goal (DesiredForce F<sub>goal</sub>)
 
-$F_{goal} = \omega_{g}+\frac{1}{\sigma_{g}}+(v_{desired}E_{desired} - V_{actual})$
+$F_{goal} = \omega_{g}*\frac{1}{\sigma_{g}}*(v_{desired}E_{desired} - V_{actual})$
 
 With:
 
-- $v_{desired}+$ Desired velocity value.
-- $E_{desired}+$ Desired direction vector with:
+- $v_{desired}$ Desired velocity value.
+- $E_{desired}$ Desired direction vector with:
 
-	$E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}+$
+	$E_{desired} = \frac{R_{goal} - R_{current}}{(\left \| R_{goal} - R_{current} \right \|}$
 
-	- $R_{goal}+$ the desired goal position.
-	- $R_{current}+$ the current agent position.
+	- $R_{goal}$ the desired goal position.
+	- $R_{current}$ the current agent position.
 
-- $V_{actual}+$ Actual velocity vector.
+- $V_{actual}$ Actual velocity vector.
 
 And parameters:
 
-- $\omega_{g}+$ Strength Factor of the desire to reach the goal (*default: 2.0*).
-- $\sigma_{g}+$ Relaxation time (*default: 0.5 seg*).
+- $\omega_{g}$ Strength Factor of the desire to reach the goal (*default: 2.0*).
+- $\sigma_{g}$ Relaxation time (*default: 0.5 seg*).
 
 
 ### 2. Repulsive force of obstacles (ObstacleForce F<sub>obs</sub>)
@@ -51,13 +51,13 @@ $F_{obs} = - \omega_{o}+e^{(-R_{po} / \sigma_{o})} U_{R_{po}}$
 
 With:
 
-- $U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}+$ Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
-- $R_{po} = R_{p} - R_{o}+$  Position of the obstacle *o* relative to the pedestrian *p*.
+- $U_{R_{po}}=\frac{R_{po}} {\left \| R_{po} \right \|}$ Unit vector in the direction from the pedestrian *p* to the obstacle *o*.
+- $R_{po} = R_{p} - R_{o}$  Position of the obstacle *o* relative to the pedestrian *p*.
 
 And parameters:
 
-- $\omega_{o}+$ Strength Factor of the desire to walk away the obstacles (*default: 10.0*).
-- $\sigma_{o}+$ Exponential parameter (*default: 0.2*).
+- $\omega_{o}$ Strength Factor of the desire to walk away the obstacles (*default: 10.0*).
+- $\sigma_{o}$ Exponential parameter (*default: 0.2*).
 
 
 

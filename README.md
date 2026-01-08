@@ -23,7 +23,7 @@ $F_{total} = F_{goal} + \sum F_{obs} + \sum F_{soc} + F_{group}$
 
 ### 1. Attractive force to reach the goal (DesiredForce F<sub>goal</sub>)
 
-$F_{goal} = \omega_{g}*\frac{1}{\sigma_{g}}*(v_{desired}E_{desired} - V_{actual})$
+$F_{goal} = \omega_{g} \frac{1}{\sigma_{g}} (v_{desired}E_{desired} - V_{actual})$
 
 With:
 
